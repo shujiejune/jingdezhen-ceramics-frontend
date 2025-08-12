@@ -1,25 +1,32 @@
 {
-  "name": "tanstack-router-config-based",
+  "name": "jingdezhen-ceramics",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000",
-    "build": "vite build && tsc --noEmit",
-    "serve": "vite preview",
-    "start": "vite"
+    "dev": "vinxi --port=3000",
+    "build": "vinxi build && tsc --noEmit",
+    "serve": "vinxi preview",
+    "start": "vinxi"
   },
   "dependencies": {
-    "@tanstack/solid-router": "^1.112.18",
-    "@tanstack/solid-router-devtools": "^1.114.0",
-    "solid-js": "^1.9.5",
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.15.3",
+    "@solidjs/start": "^1.1.7",
+    "@tanstack/solid-query": "^5.71.9",
+    "@tanstack/solid-query-devtools": "^5.71.9",
+    "@tanstack/solid-router": "^1.131.7",
+    "@tanstack/solid-router-devtools": "^1.131.7",
+    "@kobalte/core": "^0.13.11",
+    "solid-js": "^1.9.8",
     "redaxios": "^0.5.1",
     "postcss": "^8.5.1",
     "autoprefixer": "^10.4.20",
-    "tailwindcss": "^3.4.17"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.131.7",
     "vite-plugin-solid": "^2.11.6",
     "typescript": "^5.7.2",
-    "vite": "^6.1.0"
+    "vite": "^6.3.5"
   }
 }
