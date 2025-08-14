@@ -11,7 +11,7 @@ const fetchArtworks = async () => {
   ];
 };
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/gallery/")({
   component: GalleryPage,
 });
 
