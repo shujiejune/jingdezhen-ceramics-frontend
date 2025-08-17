@@ -50,10 +50,7 @@ export const VerticalNavbar: Component = () => {
         />
       </nav>
 
-      <ExpandedMenu
-        isOpen={isMenuOpen()}
-        onClose={() => setIsMenuOpen(false)}
-      />
+      <ExpandedMenu isOpen={isMenuOpen()} onClose={toggleMenu} />
 
       <SearchBar
         isOpen={isSearchOpen()}
@@ -76,6 +73,7 @@ interface CollapsedNavProps {
 const CollapsedNav: Component<CollapsedNavProps> = (props) => {
   return (
     <div class="flex flex-col items-center justify-between h-full w-full py-6">
+      {/* Top Group */}
       <div class="flex flex-col items-center space-y-8">
         <NavButton icon={List} text="Menu" onClick={props.onMenuClick} />
         <NavButton
@@ -84,6 +82,13 @@ const CollapsedNav: Component<CollapsedNavProps> = (props) => {
           onClick={props.onSearchClick}
         />
       </div>
+      {/* --- Middle Rotated Text --- */}
+      <div class="flex-grow flex items-center justify-center">
+        <span class="transform rotate-90 whitespace-nowrap text-xs font-bold text-gray-400 tracking-widest">
+          JINGDEZHEN CERAMICS
+        </span>
+      </div>
+      {/* Bottom Group */}
       <div class="flex flex-col items-center space-y-8">
         <Show
           when={props.isLoggedIn}
@@ -148,7 +153,7 @@ const ExpandedMenu: Component<ExpandedMenuProps> = (props) => {
           <CaretLeft size={24} />
         </button>
       </div>
-      <ul class="p-4">
+      <ul class="list-none p-4">
         <For each={menuItems}>
           {(item) => (
             <li>
@@ -217,7 +222,7 @@ const NavButton: Component<NavButtonProps> = (props) => {
   return (
     <button
       onClick={props.onClick}
-      class="flex flex-col items-center space-y-1 text-gray-600 hover:text-blue-600 transition-colors"
+      class="flex flex-col items-center space-y-1 text-gray-600 hover:text-blue-600 transition-colors w-full"
     >
       <props.icon size={28} />
       <span class="text-xs font-medium">{props.text}</span>
