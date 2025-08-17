@@ -10,30 +10,30 @@ function RouteComponent() {
   return (
     <Tabs aria-label="Main navigation" class="tabs">
       <Tabs.List class="tabs__list">
-        <Tabs.Trigger class="tabs__trigger" value="profile">
+        <Tabs.Trigger class="tabs__trigger" value="song">
           Song
         </Tabs.Trigger>
-        <Tabs.Trigger class="tabs__trigger" value="dashboard">
+        <Tabs.Trigger class="tabs__trigger" value="yuan">
           Yuan
         </Tabs.Trigger>
-        <Tabs.Trigger class="tabs__trigger" value="settings">
+        <Tabs.Trigger class="tabs__trigger" value="ming">
           Ming
         </Tabs.Trigger>
-        <Tabs.Trigger class="tabs__trigger" value="contact">
+        <Tabs.Trigger class="tabs__trigger" value="qing">
           Qing
         </Tabs.Trigger>
         <Tabs.Indicator class="tabs__indicator" />
       </Tabs.List>
-      <Tabs.Content class="tabs__content" value="profile">
+      <Tabs.Content class="tabs__content" value="song">
         Song details
       </Tabs.Content>
-      <Tabs.Content class="tabs__content" value="dashboard">
+      <Tabs.Content class="tabs__content" value="yuan">
         Yuan details
       </Tabs.Content>
-      <Tabs.Content class="tabs__content" value="settings">
+      <Tabs.Content class="tabs__content" value="ming">
         Ming details
       </Tabs.Content>
-      <Tabs.Content class="tabs__content" value="contact">
+      <Tabs.Content class="tabs__content" value="qing">
         Qing details
       </Tabs.Content>
     </Tabs>
