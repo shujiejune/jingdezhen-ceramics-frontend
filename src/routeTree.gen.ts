@@ -10,9 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as EngageRouteImport } from './routes/engage'
-import { Route as CeramicstoryRouteImport } from './routes/ceramicstory'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GalleryIndexRouteImport } from './routes/gallery/index'
+import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
 import { Route as GalleryArtworkIdRouteImport } from './routes/gallery/$artworkId'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -20,11 +20,6 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 const EngageRoute = EngageRouteImport.update({
   id: '/engage',
   path: '/engage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CeramicstoryRoute = CeramicstoryRouteImport.update({
-  id: '/ceramicstory',
-  path: '/ceramicstory',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
 const GalleryIndexRoute = GalleryIndexRouteImport.update({
   id: '/gallery/',
   path: '/gallery/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CeramicstoryIndexRoute = CeramicstoryIndexRouteImport.update({
+  id: '/ceramicstory/',
+  path: '/ceramicstory/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryArtworkIdRoute = GalleryArtworkIdRouteImport.update({
@@ -55,69 +55,69 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/ceramicstory': typeof CeramicstoryRoute
   '/engage': typeof EngageRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
+  '/ceramicstory': typeof CeramicstoryIndexRoute
   '/gallery': typeof GalleryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/ceramicstory': typeof CeramicstoryRoute
   '/engage': typeof EngageRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
+  '/ceramicstory': typeof CeramicstoryIndexRoute
   '/gallery': typeof GalleryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/ceramicstory': typeof CeramicstoryRoute
   '/engage': typeof EngageRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
+  '/ceramicstory/': typeof CeramicstoryIndexRoute
   '/gallery/': typeof GalleryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/ceramicstory'
     | '/engage'
     | '/auth/login'
     | '/auth/signup'
     | '/gallery/$artworkId'
+    | '/ceramicstory'
     | '/gallery'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/ceramicstory'
     | '/engage'
     | '/auth/login'
     | '/auth/signup'
     | '/gallery/$artworkId'
+    | '/ceramicstory'
     | '/gallery'
   id:
     | '__root__'
     | '/'
-    | '/ceramicstory'
     | '/engage'
     | '/auth/login'
     | '/auth/signup'
     | '/gallery/$artworkId'
+    | '/ceramicstory/'
     | '/gallery/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CeramicstoryRoute: typeof CeramicstoryRoute
   EngageRoute: typeof EngageRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignupRoute: typeof AuthSignupRoute
   GalleryArtworkIdRoute: typeof GalleryArtworkIdRoute
+  CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
   GalleryIndexRoute: typeof GalleryIndexRoute
 }
 
@@ -128,13 +128,6 @@ declare module '@tanstack/solid-router' {
       path: '/engage'
       fullPath: '/engage'
       preLoaderRoute: typeof EngageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ceramicstory': {
-      id: '/ceramicstory'
-      path: '/ceramicstory'
-      fullPath: '/ceramicstory'
-      preLoaderRoute: typeof CeramicstoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -149,6 +142,13 @@ declare module '@tanstack/solid-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ceramicstory/': {
+      id: '/ceramicstory/'
+      path: '/ceramicstory'
+      fullPath: '/ceramicstory'
+      preLoaderRoute: typeof CeramicstoryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery/$artworkId': {
@@ -177,11 +177,11 @@ declare module '@tanstack/solid-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CeramicstoryRoute: CeramicstoryRoute,
   EngageRoute: EngageRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthSignupRoute: AuthSignupRoute,
   GalleryArtworkIdRoute: GalleryArtworkIdRoute,
+  CeramicstoryIndexRoute: CeramicstoryIndexRoute,
   GalleryIndexRoute: GalleryIndexRoute,
 }
 export const routeTree = rootRouteImport
