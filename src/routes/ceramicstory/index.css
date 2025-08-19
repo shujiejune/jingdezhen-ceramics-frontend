@@ -1,52 +1,61 @@
 .tabs {
-  width: 100%;
-}
-.tabs[data-orientation="vertical"] {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
+
 .tabs__list {
   position: relative;
   display: flex;
+  flex-shrink: 0; /* Prevents the list from shrinking */
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid hsl(220 13% 91%);
+
+  /* Enable horizontal scrolling but hide the scrollbar */
+  overflow-x: auto;
+  scrollbar-width: none; /* For Firefox */
 }
-.tabs__list[data-orientation="horizontal"] {
-  align-items: center;
-  border-bottom: 1px solid hsl(240 5% 84%);
+
+.tabs__list::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
-.tabs__list[data-orientation="vertical"] {
-  flex-direction: column;
-  align-items: stretch;
-  border-right: 1px solid hsl(240 5% 84%);
-}
-.tabs__indicator {
-  position: absolute;
-  background-color: hsl(200 98% 39%);
-  transition: all 250ms;
-}
-.tabs__indicator[data-orientation="horizontal"] {
-  bottom: -1px;
-  height: 2px;
-}
-.tabs__indicator[data-orientation="vertical"] {
-  right: -1px;
-  width: 2px;
-}
+
 .tabs__trigger {
-  display: inline-block;
-  padding: 8px 16px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: hsl(220 9% 46%);
+  background-color: transparent;
+  border: none;
+  border-radius: 9999px; /* Pill shape */
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
   outline: none;
 }
+
 .tabs__trigger:hover {
-  background-color: hsl(0 0% 98%);
-  color: hsl(240 5% 34%);
+  background-color: hsl(220 13% 96%);
+  color: hsl(220 14% 21%);
 }
+
 .tabs__trigger:focus-visible {
-  background-color: hsl(240 5% 96%);
+  box-shadow: 0 0 0 2px hsl(216 98% 52%);
 }
-.tabs__trigger[data-disabled],
-.tabs__trigger[data-disabled]:hover {
-  opacity: 0.5;
-  background-color: transparent;
+
+/* Style for the selected tab */
+.tabs__trigger[data-selected] {
+  background-color: hsl(216 98% 52%);
+  color: white;
 }
+
 .tabs__content {
-  padding: 16px;
+  outline: none;
+}
+
+/* Hide content that is not selected */
+.tabs__content:not([data-selected]) {
+  display: none;
 }
