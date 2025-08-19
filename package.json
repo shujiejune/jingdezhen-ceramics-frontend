@@ -13,6 +13,8 @@
     "@tanstack/solid-query": "^5.83.1",
     "@tanstack/solid-router": "^1.131.7",
     "@tanstack/solid-router-devtools": "^1.131.9",
+    "@types/marked": "^6.0.0",
+    "marked": "^16.2.0",
     "phosphor-solid": "^1.1.5",
     "solid-js": "^1.9.8",
     "vinxi": "^0.5.7"

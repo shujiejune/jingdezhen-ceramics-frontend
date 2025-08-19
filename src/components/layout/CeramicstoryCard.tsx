@@ -29,7 +29,11 @@ export const CeramicStoryCard: Component<CeramicStoryCardProps> = (props) => {
           src={props.data.imageUrl}
           alt={`Ceramics from the ${props.data.dynasty} dynasty`}
           class="object-cover w-full h-full"
-          onerror="this.onerror=null;this.src='https://placehold.co/400x600/E2E8F0/4A5568?text=Image';"
+          onError={(e) => {
+            e.currentTarget.onerror = null; // Prevents infinite loop if placeholder also fails
+            e.currentTarget.src =
+              "https://placehold.co/400x600/E2E8F0/4A5568?text=Image";
+          }}
         />
       </div>
 
