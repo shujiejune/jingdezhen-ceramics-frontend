@@ -40,21 +40,20 @@ export const CeramicStoryCard: Component<CeramicStoryCardProps> = (props) => {
       {/* Right Side: Text Content */}
       <div class="p-8 flex flex-col">
         {/* Header Section */}
-        <div class="mb-4">
-          <div class="flex items-baseline space-x-4">
-            <span class="text-4xl font-bold text-gray-800">
-              {props.data.dynasty}
-            </span>
-            <span class="text-lg text-gray-500">{props.data.period}</span>
+        <div class="mb-6 grid grid-cols-2 gap-x-8 gap-y-2">
+          {/* --- Row 1 --- */}
+          {/* Dynasty Name (Column 1) */}
+          <div class="text-sm text-gray-600">Dynasty: {props.data.dynasty}</div>
+          {/* Period Name (Column 2) */}
+          {/* 'self-end' aligns the text to the bottom, lining it up nicely with the large dynasty title */}
+          <div class="text-sm text-gray-600 self-end">
+            Period: {props.data.period}
           </div>
-          <div class="flex items-center space-x-6 mt-1 text-sm text-gray-600">
-            <span>
-              Start: <strong>{props.data.startYear}</strong>
-            </span>
-            <span>
-              End: <strong>{props.data.endYear}</strong>
-            </span>
-          </div>
+          {/* --- Row 2 --- */}
+          {/* Start Year (Column 1) */}
+          <div class="text-sm text-gray-600">Start: {props.data.startYear}</div>
+          {/* End Year (Column 2) */}
+          <div class="text-sm text-gray-600">End: {props.data.endYear}</div>
         </div>
 
         {/* Description */}
