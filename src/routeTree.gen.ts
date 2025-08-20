@@ -9,19 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as EngageRouteImport } from './routes/engage'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GalleryIndexRouteImport } from './routes/gallery/index'
+import { Route as EngageIndexRouteImport } from './routes/engage/index'
 import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
 import { Route as GalleryArtworkIdRouteImport } from './routes/gallery/$artworkId'
+import { Route as CeramicstorySlugRouteImport } from './routes/ceramicstory/$slug'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 
-const EngageRoute = EngageRouteImport.update({
-  id: '/engage',
-  path: '/engage',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -32,6 +28,11 @@ const GalleryIndexRoute = GalleryIndexRouteImport.update({
   path: '/gallery/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EngageIndexRoute = EngageIndexRouteImport.update({
+  id: '/engage/',
+  path: '/engage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CeramicstoryIndexRoute = CeramicstoryIndexRouteImport.update({
   id: '/ceramicstory/',
   path: '/ceramicstory/',
@@ -40,6 +41,11 @@ const CeramicstoryIndexRoute = CeramicstoryIndexRouteImport.update({
 const GalleryArtworkIdRoute = GalleryArtworkIdRouteImport.update({
   id: '/gallery/$artworkId',
   path: '/gallery/$artworkId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CeramicstorySlugRoute = CeramicstorySlugRouteImport.update({
+  id: '/ceramicstory/$slug',
+  path: '/ceramicstory/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
@@ -55,81 +61,81 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/engage': typeof EngageRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
+  '/engage': typeof EngageIndexRoute
   '/gallery': typeof GalleryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/engage': typeof EngageRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
+  '/engage': typeof EngageIndexRoute
   '/gallery': typeof GalleryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/engage': typeof EngageRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory/': typeof CeramicstoryIndexRoute
+  '/engage/': typeof EngageIndexRoute
   '/gallery/': typeof GalleryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/engage'
     | '/auth/login'
     | '/auth/signup'
+    | '/ceramicstory/$slug'
     | '/gallery/$artworkId'
     | '/ceramicstory'
+    | '/engage'
     | '/gallery'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/engage'
     | '/auth/login'
     | '/auth/signup'
+    | '/ceramicstory/$slug'
     | '/gallery/$artworkId'
     | '/ceramicstory'
+    | '/engage'
     | '/gallery'
   id:
     | '__root__'
     | '/'
-    | '/engage'
     | '/auth/login'
     | '/auth/signup'
+    | '/ceramicstory/$slug'
     | '/gallery/$artworkId'
     | '/ceramicstory/'
+    | '/engage/'
     | '/gallery/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  EngageRoute: typeof EngageRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  CeramicstorySlugRoute: typeof CeramicstorySlugRoute
   GalleryArtworkIdRoute: typeof GalleryArtworkIdRoute
   CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
+  EngageIndexRoute: typeof EngageIndexRoute
   GalleryIndexRoute: typeof GalleryIndexRoute
 }
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
-    '/engage': {
-      id: '/engage'
-      path: '/engage'
-      fullPath: '/engage'
-      preLoaderRoute: typeof EngageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -144,6 +150,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof GalleryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/engage/': {
+      id: '/engage/'
+      path: '/engage'
+      fullPath: '/engage'
+      preLoaderRoute: typeof EngageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ceramicstory/': {
       id: '/ceramicstory/'
       path: '/ceramicstory'
@@ -156,6 +169,13 @@ declare module '@tanstack/solid-router' {
       path: '/gallery/$artworkId'
       fullPath: '/gallery/$artworkId'
       preLoaderRoute: typeof GalleryArtworkIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ceramicstory/$slug': {
+      id: '/ceramicstory/$slug'
+      path: '/ceramicstory/$slug'
+      fullPath: '/ceramicstory/$slug'
+      preLoaderRoute: typeof CeramicstorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/signup': {
@@ -177,11 +197,12 @@ declare module '@tanstack/solid-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  EngageRoute: EngageRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthSignupRoute: AuthSignupRoute,
+  CeramicstorySlugRoute: CeramicstorySlugRoute,
   GalleryArtworkIdRoute: GalleryArtworkIdRoute,
   CeramicstoryIndexRoute: CeramicstoryIndexRoute,
+  EngageIndexRoute: EngageIndexRoute,
   GalleryIndexRoute: GalleryIndexRoute,
 }
 export const routeTree = rootRouteImport

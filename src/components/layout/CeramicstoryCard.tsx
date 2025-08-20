@@ -42,10 +42,10 @@ export const CeramicStoryCard: Component<CeramicStoryCardProps> = (props) => {
         {/* Header Section */}
         <div class="mb-4">
           <div class="flex items-baseline space-x-4">
-            <h2 class="text-4xl font-bold text-gray-800">
+            <span class="text-4xl font-bold text-gray-800">
               {props.data.dynasty}
-            </h2>
-            <p class="text-lg text-gray-500">{props.data.period}</p>
+            </span>
+            <span class="text-lg text-gray-500">{props.data.period}</span>
           </div>
           <div class="flex items-center space-x-6 mt-1 text-sm text-gray-600">
             <span>

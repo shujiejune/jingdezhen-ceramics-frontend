@@ -97,23 +97,23 @@ function ArticlePage() {
         {/* Article Header */}
         <header class="text-center mb-8">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
-            {article.title}
+            {article().title}
           </h1>
           <div class="mt-4 text-sm text-gray-500 flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
             <span>
-              By <strong>{article.author}</strong>
+              By <strong>{article().author}</strong>
             </span>
             <span class="text-gray-300">|</span>
-            <span>Created: {formatDateTime(article.createdAt)}</span>
+            <span>Created: {formatDateTime(article().createdAt)}</span>
             <span class="text-gray-300">|</span>
-            <span>Updated: {formatDateTime(article.updatedAt)}</span>
+            <span>Updated: {formatDateTime(article().updatedAt)}</span>
             <span class="text-gray-300">|</span>
-            <span>{calculateReadTime(article.content)} min read</span>
+            <span>{calculateReadTime(article().content)} min read</span>
           </div>
         </header>
 
         {/* Article Content */}
-        <MarkdownRenderer content={article.content} />
+        <MarkdownRenderer content={article().content} />
       </article>
     </div>
   );
@@ -122,16 +122,25 @@ function ArticlePage() {
 // --- Markdown Rendering Component ---
 // This component safely renders the Markdown content as HTML.
 const MarkdownRenderer: Component<{ content: string }> = (props) => {
+  // 1. Component Setup: when calling MarkdownRenderer, container is undefined
   let container: HTMLDivElement | undefined;
 
-  onMount(() => {
+  // 4. onMount Hooks: We are guaranteed that container is a real HTML element,
+  // it's now safe to access its properties like innerHTML
+  onMount(async () => {
     if (container) {
       // The `marked` library converts the markdown string to an HTML string.
       // We then set this HTML as the content of our div.
-      container.innerHTML = marked.parse(props.content);
+      // If wrote container.innerHTML = await ..., it would try to run in Step 1,
+      // when container is still undefined.
+      const htmlContent = await marked.parse(props.content);
+      container.innerHTML = htmlContent;
     }
   });
 
+  // 2. JSX Return: this is a description of HTML that needs to be created
   // We add Tailwind's `prose` classes for beautiful default typography styling
   return <div ref={container} class="prose lg:prose-xl max-w-none" />;
+  // 3. Mount to DOM: Solid.js takes the description and created the <div> element in the browser's DOM
+  // It sees ref={container} and assigns the newly created <div> to the container variable.
 };
