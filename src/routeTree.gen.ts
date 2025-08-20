@@ -14,6 +14,7 @@ import { Route as GalleryIndexRouteImport } from './routes/gallery/index'
 import { Route as EngageIndexRouteImport } from './routes/engage/index'
 import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
 import { Route as GalleryArtworkIdRouteImport } from './routes/gallery/$artworkId'
+import { Route as EngageSlugRouteImport } from './routes/engage/$slug'
 import { Route as CeramicstorySlugRouteImport } from './routes/ceramicstory/$slug'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -43,6 +44,11 @@ const GalleryArtworkIdRoute = GalleryArtworkIdRouteImport.update({
   path: '/gallery/$artworkId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EngageSlugRoute = EngageSlugRouteImport.update({
+  id: '/engage/$slug',
+  path: '/engage/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CeramicstorySlugRoute = CeramicstorySlugRouteImport.update({
   id: '/ceramicstory/$slug',
   path: '/ceramicstory/$slug',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
+  '/engage/$slug': typeof EngageSlugRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/engage': typeof EngageIndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
+  '/engage/$slug': typeof EngageSlugRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/engage': typeof EngageIndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
+  '/engage/$slug': typeof EngageSlugRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory/': typeof CeramicstoryIndexRoute
   '/engage/': typeof EngageIndexRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/signup'
     | '/ceramicstory/$slug'
+    | '/engage/$slug'
     | '/gallery/$artworkId'
     | '/ceramicstory'
     | '/engage'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/signup'
     | '/ceramicstory/$slug'
+    | '/engage/$slug'
     | '/gallery/$artworkId'
     | '/ceramicstory'
     | '/engage'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/signup'
     | '/ceramicstory/$slug'
+    | '/engage/$slug'
     | '/gallery/$artworkId'
     | '/ceramicstory/'
     | '/engage/'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthSignupRoute: typeof AuthSignupRoute
   CeramicstorySlugRoute: typeof CeramicstorySlugRoute
+  EngageSlugRoute: typeof EngageSlugRoute
   GalleryArtworkIdRoute: typeof GalleryArtworkIdRoute
   CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
   EngageIndexRoute: typeof EngageIndexRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof GalleryArtworkIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/engage/$slug': {
+      id: '/engage/$slug'
+      path: '/engage/$slug'
+      fullPath: '/engage/$slug'
+      preLoaderRoute: typeof EngageSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ceramicstory/$slug': {
       id: '/ceramicstory/$slug'
       path: '/ceramicstory/$slug'
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthSignupRoute: AuthSignupRoute,
   CeramicstorySlugRoute: CeramicstorySlugRoute,
+  EngageSlugRoute: EngageSlugRoute,
   GalleryArtworkIdRoute: GalleryArtworkIdRoute,
   CeramicstoryIndexRoute: CeramicstoryIndexRoute,
   EngageIndexRoute: EngageIndexRoute,
