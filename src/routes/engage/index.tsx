@@ -3,7 +3,7 @@ import { For, Show, createMemo } from "solid-js";
 import { PageHeader } from "~/components/layout/PageHeader";
 import { activityTypes, ActivityCard } from "~/components/layout/ActivityCard";
 import { Link } from "@tanstack/solid-router";
-import { Select } from "@kobalte/core/select";
+import * as Select from "@kobalte/core/select";
 import { CaretDown } from "~/components/icons/Phosphor";
 import { z } from "zod";
 import type { Activity, ActivityType } from "~/components/layout/ActivityCard";
@@ -135,7 +135,7 @@ function EngagePage() {
 
 interface ActivityFilterProps {
   selectedValue: ActivityType;
-  onValueChange: (value: ActivityType) => void;
+  onValueChange: (value: ActivityType | null) => void;
 }
 
 const ActivityFilter: Component<ActivityFilterProps> = (props) => {
