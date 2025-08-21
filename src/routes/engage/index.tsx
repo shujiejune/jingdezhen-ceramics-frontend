@@ -96,9 +96,13 @@ function EngagePage() {
     return allActivities.filter((activity) => activity.type === selectedType);
   });
 
-  const handleFilterChange = (newType: ActivityType) => {
+  const handleFilterChange: (newType: ActivityType | null) => void = (
+    newType,
+  ) => {
     // Update the URL search params on change, which triggers a re-render
-    navigate({ search: { type: newType } });
+    if (newType) {
+      navigate({ search: { type: newType } });
+    }
   };
 
   return (
