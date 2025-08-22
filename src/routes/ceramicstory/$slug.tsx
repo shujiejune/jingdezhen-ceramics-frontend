@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/solid-router";
 import { createQuery } from "@tanstack/solid-query";
 import { Show, Suspense, onMount } from "solid-js";
 import { marked } from "marked";
+import { formatDateTime } from "~/lib/utils";
 import type { Component } from "solid-js";
 
 // --- Data Fetching and Types ---
@@ -63,20 +64,6 @@ export const Route = createFileRoute("/ceramicstory/$slug")({
 });
 
 // --- Helper Functions ---
-
-// Formats an ISO date string to "YYYY-MM-DD HH:MM"
-function formatDateTime(isoString: string) {
-  const date = new Date(isoString);
-  const pad = (num: number) => num.toString().padStart(2, "0");
-
-  const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1);
-  const day = pad(date.getDate());
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
-}
 
 // Calculates estimated read time
 function calculateReadTime(text: string): number {
