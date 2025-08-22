@@ -141,7 +141,7 @@ const forumSearchSchema = z.object({
   tags: z.boolean().optional(),
 });
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/forum/")({
   validateSearch: (search) => forumSearchSchema.parse(search),
   component: ForumPage,
 });
@@ -162,14 +162,14 @@ function ForumPage() {
 
     // Filter by category
     if (category && category !== "All") {
-      posts = posts.filter((p) => p.category === category);
+      posts = posts.filter((p) => p.categoryName === category);
     }
     // Filter by search query
     if (query) {
       posts = posts.filter(
         (p) =>
           p.title.toLowerCase().includes(query) ||
-          p.tags.some((t) => t.includes(query)),
+          p.tags.some((t) => t.name.includes(query)),
       );
     }
     // Sort
@@ -391,7 +391,7 @@ const PostListItem: Component<{ post: ForumPost; isPinned?: boolean }> = (
         </Link>
         <div class="post-tags">
           <For each={props.post.tags}>
-            {(tag) => <span class="post-tag">{tag}</span>}
+            {(tag) => <span class="post-tag">{tag.name}</span>}
           </For>
         </div>
       </div>

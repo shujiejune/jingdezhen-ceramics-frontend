@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GalleryIndexRouteImport } from './routes/gallery/index'
+import { Route as ForumIndexRouteImport } from './routes/forum/index'
 import { Route as EngageIndexRouteImport } from './routes/engage/index'
 import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
 import { Route as GalleryArtworkIdRouteImport } from './routes/gallery/$artworkId'
@@ -27,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
 const GalleryIndexRoute = GalleryIndexRouteImport.update({
   id: '/gallery/',
   path: '/gallery/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForumIndexRoute = ForumIndexRouteImport.update({
+  id: '/forum/',
+  path: '/forum/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EngageIndexRoute = EngageIndexRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/engage': typeof EngageIndexRoute
+  '/forum': typeof ForumIndexRoute
   '/gallery': typeof GalleryIndexRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/engage': typeof EngageIndexRoute
+  '/forum': typeof ForumIndexRoute
   '/gallery': typeof GalleryIndexRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory/': typeof CeramicstoryIndexRoute
   '/engage/': typeof EngageIndexRoute
+  '/forum/': typeof ForumIndexRoute
   '/gallery/': typeof GalleryIndexRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/gallery/$artworkId'
     | '/ceramicstory'
     | '/engage'
+    | '/forum'
     | '/gallery'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/gallery/$artworkId'
     | '/ceramicstory'
     | '/engage'
+    | '/forum'
     | '/gallery'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/gallery/$artworkId'
     | '/ceramicstory/'
     | '/engage/'
+    | '/forum/'
     | '/gallery/'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   GalleryArtworkIdRoute: typeof GalleryArtworkIdRoute
   CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
   EngageIndexRoute: typeof EngageIndexRoute
+  ForumIndexRoute: typeof ForumIndexRoute
   GalleryIndexRoute: typeof GalleryIndexRoute
 }
 
@@ -161,6 +174,13 @@ declare module '@tanstack/solid-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forum/': {
+      id: '/forum/'
+      path: '/forum'
+      fullPath: '/forum'
+      preLoaderRoute: typeof ForumIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/engage/': {
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryArtworkIdRoute: GalleryArtworkIdRoute,
   CeramicstoryIndexRoute: CeramicstoryIndexRoute,
   EngageIndexRoute: EngageIndexRoute,
+  ForumIndexRoute: ForumIndexRoute,
   GalleryIndexRoute: GalleryIndexRoute,
 }
 export const routeTree = rootRouteImport
