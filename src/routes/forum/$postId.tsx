@@ -7,15 +7,13 @@ import type { Component, JSX } from "solid-js";
 
 // Import shared types and utils
 import { type ForumPost, type Tag } from "~/lib/types";
-import { formatLastActivity } from "~/lib/utils"; // We can reuse this for date formatting
+import { formatLastActivity } from "~/lib/utils";
 
 // Import custom icons
 import {
   ThumbsUp,
   BookmarkSimple,
   DotsThree,
-  Link as LinkIcon,
-  PencilSimple,
 } from "~/components/icons/Phosphor";
 
 // --- Data Fetching and Types ---
@@ -305,13 +303,9 @@ const CardMenu: Component<{ isOwnContent: boolean }> = (props) => {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content class="menu-content">
-          <DropdownMenu.Item class="menu-item">
-            <LinkIcon size={16} /> Copy Link
-          </DropdownMenu.Item>
+          <DropdownMenu.Item class="menu-item">Copy Link</DropdownMenu.Item>
           <Show when={props.isOwnContent}>
-            <DropdownMenu.Item class="menu-item">
-              <PencilSimple size={16} /> Edit
-            </DropdownMenu.Item>
+            <DropdownMenu.Item class="menu-item">Edit</DropdownMenu.Item>
           </Show>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
