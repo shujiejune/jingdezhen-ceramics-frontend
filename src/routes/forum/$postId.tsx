@@ -23,6 +23,7 @@ interface ForumComment {
   authorNickname: string;
   authorAvatarUrl?: string;
   content: string;
+  htmlContent: string;
   createdAt: string;
   likeCount: number;
   replies: ForumComment[]; // For nesting
@@ -30,6 +31,7 @@ interface ForumComment {
 }
 
 interface PostDetails extends ForumPost {
+  htmlContent: string;
   viewCount: number;
   comments: ForumComment[];
   isOwned: boolean; // To determine if "Edit" shows
@@ -39,6 +41,19 @@ interface PostDetails extends ForumPost {
 const fetchPostDetails = async (postId: string): Promise<PostDetails> => {
   console.log(`Fetching post details for ID: ${postId}`);
   await new Promise((r) => setTimeout(r, 500));
+
+  const rawContent = `I found this piece at a local market and was struck by the mark on the bottom. I've attached a photo below.
+
+  ![Mark](https://placehold.co/600x300/e0e0e0/4d4d4d?text=Ceramic+Mark)
+
+  It doesn't look like any of the standard Ming or Qing dynasty marks I'm familiar with.`;
+
+  const comment1Content =
+    "That's a fascinating mark! It has some characteristics of provincial kilns from the late Qing period.";
+  const reply1Content =
+    "That's a great insight, thank you! I was thinking it might be a provincial piece.";
+  const comment2Content =
+    "I agree with ClayMaster. It could also be a modern reproduction made in an older style.";
 
   // In a real app, this would be an API call
   return {
@@ -56,11 +71,8 @@ const fetchPostDetails = async (postId: string): Promise<PostDetails> => {
     createdAt: "2025-08-21T10:00:00Z",
     lastActivityAt: "2025-08-21T16:30:00Z",
     isPinned: false,
-    content: `I found this piece at a local market and was struck by the mark on the bottom. I've attached a photo below.
-
-![Mark](https://placehold.co/600x300/e0e0e0/4d4d4d?text=Ceramic+Mark)
-
-It doesn't look like any of the standard Ming or Qing dynasty marks I'm familiar with. The calligraphy seems a bit more rustic. Does anyone have any ideas about its origin or age? Any help would be greatly appreciated!`,
+    content: rawContent,
+    htmlContent: await marked.parse(rawContent),
     viewCount: 258,
     isOwned: true, // Mock: user owns this post
     comments: [
@@ -68,31 +80,31 @@ It doesn't look like any of the standard Ming or Qing dynasty marks I'm familiar
         id: 101,
         authorNickname: "ClayMaster",
         authorAvatarUrl: "https://placehold.co/40x40/f0fdf4/166534?text=C",
-        content:
-          "That's a fascinating mark! It has some characteristics of provincial kilns from the late Qing period, but the form is unusual. The lack of a clear reign mark suggests it wasn't for imperial use.",
+        content: comment1Content,
+        htmlContent: await marked.parse(comment1Content),
         createdAt: "2025-08-21T12:45:00Z",
         likeCount: 5,
+        isOwned: false,
         replies: [
           {
             id: 103,
             authorNickname: "L. Chen",
             authorAvatarUrl: "https://placehold.co/40x40/fef2f2/991b1b?text=L",
-            content:
-              "That's a great insight, thank you! I was thinking it might be a provincial piece. I'll do some more research into that area.",
+            content: reply1Content,
+            htmlContent: await marked.parse(reply1Content),
             createdAt: "2025-08-21T13:10:00Z",
             likeCount: 2,
             replies: [],
             isOwned: true,
           },
         ],
-        isOwned: false,
       },
       {
         id: 102,
         authorNickname: "D. Miller",
         authorAvatarUrl: "https://placehold.co/40x40/eff6ff/3730a3?text=D",
-        content:
-          "I agree with ClayMaster. It could also be a modern reproduction made in an older style. Have you had the material tested?",
+        content: comment2Content,
+        htmlContent: await marked.parse(comment2Content),
         createdAt: "2025-08-21T14:20:00Z",
         likeCount: 1,
         replies: [],
@@ -113,8 +125,8 @@ export const Route = createFileRoute("/forum/$postId")({
 
 function PostDetailPage() {
   const postQuery = useQuery(() => ({
-    queryKey: ["forum-post", Route.useParams().postId],
-    queryFn: () => fetchPostDetails(Route.useParams().postId),
+    queryKey: ["forum-post", Route.useParams()().postId],
+    queryFn: () => fetchPostDetails(Route.useParams()().postId),
   }));
 
   return (
@@ -185,10 +197,7 @@ const PostCard: Component<{ post: PostDetails }> = (props) => {
         createdAt={props.post.createdAt}
         isOwnContent={props.post.isOwned}
       />
-      <div
-        class="card-content prose"
-        innerHTML={marked.parse(props.post.content)}
-      />
+      <div class="card-content prose" innerHTML={props.post.htmlContent} />
       <CardFooter isPost={true} />
     </div>
   );
@@ -216,7 +225,7 @@ const CommentCard: Component<{ comment: ForumComment }> = (props) => {
           />
           <div
             class="card-content prose-sm"
-            innerHTML={marked.parse(props.comment.content)}
+            innerHTML={props.comment.htmlContent}
           />
           <CardFooter isPost={false} onReplyClick={() => setIsReplying(true)} />
         </div>
