@@ -15,6 +15,7 @@ import { Route as ForumIndexRouteImport } from './routes/forum/index'
 import { Route as EngageIndexRouteImport } from './routes/engage/index'
 import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
 import { Route as GalleryArtworkIdRouteImport } from './routes/gallery/$artworkId'
+import { Route as ForumNewRouteImport } from './routes/forum/new'
 import { Route as EngageSlugRouteImport } from './routes/engage/$slug'
 import { Route as CeramicstorySlugRouteImport } from './routes/ceramicstory/$slug'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
@@ -50,6 +51,11 @@ const GalleryArtworkIdRoute = GalleryArtworkIdRouteImport.update({
   path: '/gallery/$artworkId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForumNewRoute = ForumNewRouteImport.update({
+  id: '/forum/new',
+  path: '/forum/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EngageSlugRoute = EngageSlugRouteImport.update({
   id: '/engage/$slug',
   path: '/engage/$slug',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/auth/signup': typeof AuthSignupRoute
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/engage/$slug': typeof EngageSlugRoute
+  '/forum/new': typeof ForumNewRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/engage': typeof EngageIndexRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/auth/signup': typeof AuthSignupRoute
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/engage/$slug': typeof EngageSlugRoute
+  '/forum/new': typeof ForumNewRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/engage': typeof EngageIndexRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/auth/signup': typeof AuthSignupRoute
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/engage/$slug': typeof EngageSlugRoute
+  '/forum/new': typeof ForumNewRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
   '/ceramicstory/': typeof CeramicstoryIndexRoute
   '/engage/': typeof EngageIndexRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/ceramicstory/$slug'
     | '/engage/$slug'
+    | '/forum/new'
     | '/gallery/$artworkId'
     | '/ceramicstory'
     | '/engage'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/ceramicstory/$slug'
     | '/engage/$slug'
+    | '/forum/new'
     | '/gallery/$artworkId'
     | '/ceramicstory'
     | '/engage'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/auth/signup'
     | '/ceramicstory/$slug'
     | '/engage/$slug'
+    | '/forum/new'
     | '/gallery/$artworkId'
     | '/ceramicstory/'
     | '/engage/'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   AuthSignupRoute: typeof AuthSignupRoute
   CeramicstorySlugRoute: typeof CeramicstorySlugRoute
   EngageSlugRoute: typeof EngageSlugRoute
+  ForumNewRoute: typeof ForumNewRoute
   GalleryArtworkIdRoute: typeof GalleryArtworkIdRoute
   CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
   EngageIndexRoute: typeof EngageIndexRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof GalleryArtworkIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forum/new': {
+      id: '/forum/new'
+      path: '/forum/new'
+      fullPath: '/forum/new'
+      preLoaderRoute: typeof ForumNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/engage/$slug': {
       id: '/engage/$slug'
       path: '/engage/$slug'
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignupRoute: AuthSignupRoute,
   CeramicstorySlugRoute: CeramicstorySlugRoute,
   EngageSlugRoute: EngageSlugRoute,
+  ForumNewRoute: ForumNewRoute,
   GalleryArtworkIdRoute: GalleryArtworkIdRoute,
   CeramicstoryIndexRoute: CeramicstoryIndexRoute,
   EngageIndexRoute: EngageIndexRoute,

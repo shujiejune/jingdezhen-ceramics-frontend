@@ -2,9 +2,8 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 2rem;
-  width: 100%;
   padding: 2rem;
-  border: 5px solid red;
+  width: 100%;
 }
 
 /* Sidebar Styles */
@@ -12,7 +11,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  border: 5px solid red;
 }
 
 .search-bar {
@@ -62,7 +60,6 @@
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
-  border: 5px solid red;
 }
 .tag:hover {
   background-color: #e2e8f0;
@@ -84,7 +81,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  border: 5px solid red;
 }
 .category-button:hover {
   background-color: #f1f5f9;
@@ -99,7 +95,6 @@
 .main-content {
   display: flex;
   flex-direction: column;
-  border: 5px solid red;
 }
 
 .filter-bar {
@@ -109,7 +104,6 @@
   padding-bottom: 1rem;
   border-bottom: 1px solid #e2e8f0;
   margin-bottom: 1.5rem;
-  border: 5px solid red;
 }
 
 .post-count {
@@ -124,6 +118,22 @@
   background-color: white;
   min-width: 180px;
   text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.select-trigger .caret-up {
+  display: none;
+}
+.select-trigger .caret-down {
+  display: block;
+}
+.select-trigger[data-expanded="true"] .caret-up {
+  display: block;
+}
+.select-trigger[data-expanded="true"] .caret-down {
+  display: none;
 }
 
 .select-content {

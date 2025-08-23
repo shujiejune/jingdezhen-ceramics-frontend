@@ -18,6 +18,7 @@ import * as Pagination from "@kobalte/core/pagination";
 import { z } from "zod";
 import type { Component, JSX } from "solid-js";
 import type { ForumPost } from "~/lib/types";
+import type { SelectIconRenderProps } from "@kobalte/core/select";
 
 // --- Data, Types, and Helper Functions ---
 
@@ -178,7 +179,7 @@ const fetchPosts = async (filters: {
         categoryName: "Events",
         upvotes: 128,
         comments: 42,
-        created_at: "2025-08-20T11:00:00Z",
+        createdAt: "2025-08-20T11:00:00Z",
         lastActivityAt: "2025-08-21T17:15:00Z",
         isPinned: true,
         content: "",
@@ -400,12 +401,8 @@ const FilterBar: Component = () => {
               {(state) => state.selectedOption()}
             </Select.Value>
             <Select.Icon class="select-caret">
-              {(state) => (
-                <Show when={state.isOpen()} fallback={<CaretDown />}>
-                  {" "}
-                  <CaretUp />{" "}
-                </Show>
-              )}
+              <CaretDown class="caret-down" />
+              <CaretUp class="caret-up" />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>
@@ -435,7 +432,9 @@ const TagCloud: Component = () => {
 
   const navigate = useNavigate({ from: Route.fullPath });
   const handleTagClick = (tagName: string) => {
-    navigate({ search: { view: "posts", tag: tagName, page: 1 } });
+    navigate({
+      search: (prev) => ({ ...prev, view: "posts", tag: tagName, page: 1 }),
+    });
   };
 
   return (
