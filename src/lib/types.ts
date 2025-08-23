@@ -13,8 +13,8 @@ export interface ForumPost {
   title: string;
   content: string;
   isPinned: boolean;
-  comments: number;
-  likes: number; // This is the "upvote" count from the backend
+  commentCount: number;
+  likeCount: number; // This is the "upvote" count from the backend
   lastActivityAt: string; // time.Time becomes a string in JSON
   createdAt: string;
   tags: Tag[];

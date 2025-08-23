@@ -1,24 +1,339 @@
 import { createFileRoute } from "@tanstack/solid-router";
-/*
-export const Route = createFileRoute()({
-  // The UI component for this route.
-  // Type: A SolidJS component function.
-  component: PostComponent,
+import { useQuery } from "@tanstack/solid-query";
+import { For, Show, Suspense, createSignal } from "solid-js";
+import { marked } from "marked";
+import * as DropdownMenu from "@kobalte/core/dropdown-menu";
+import type { Component, JSX } from "solid-js";
 
-  // Fetches data before the component renders.
-  // Type: An async function that returns the data.
-  loader: async ({ params }) => {
-    // 'params' is provided by the router and contains { postId: '...' }
-    return fetchPostById(params.postId);
-  },
+// Import shared types and utils
+import { type ForumPost, type Tag } from "~/lib/types";
+import { formatLastActivity } from "~/lib/utils"; // We can reuse this for date formatting
 
-  // Validates search params like ?showComments=true
-  // Type: A function that takes search params and returns a validated object.
-  validateSearch: (search) => {
-    return z.object({ showComments: z.boolean().optional() }).parse(search);
-  },
+// Import custom icons
+import {
+  ThumbsUp,
+  BookmarkSimple,
+  DotsThree,
+  Link as LinkIcon,
+  PencilSimple,
+} from "~/components/icons/Phosphor";
 
-  // A component to show if the loader fails.
-  // Type: A SolidJS component function.
-  errorComponent: PostErrorComponent,
-  }); */
+// --- Data Fetching and Types ---
+
+interface ForumComment {
+  id: number;
+  authorNickname: string;
+  authorAvatarUrl?: string;
+  content: string;
+  createdAt: string;
+  likeCount: number;
+  replies: ForumComment[]; // For nesting
+  isOwned: boolean; // To determine if "Edit" shows
+}
+
+interface PostDetails extends ForumPost {
+  viewCount: number;
+  comments: ForumComment[];
+  isOwned: boolean; // To determine if "Edit" shows
+}
+
+// Mock function to fetch a single post and its comments
+const fetchPostDetails = async (postId: string): Promise<PostDetails> => {
+  console.log(`Fetching post details for ID: ${postId}`);
+  await new Promise((r) => setTimeout(r, 500));
+
+  // In a real app, this would be an API call
+  return {
+    id: parseInt(postId),
+    title: "Help Identifying This Mark",
+    authorNickname: "L. Chen",
+    authorAvatarUrl: "https://placehold.co/40x40/fef2f2/991b1b?text=L",
+    tags: [
+      { id: 3, name: "history", color: "bg-yellow-100 text-yellow-800" },
+      { id: 4, name: "question", color: "bg-red-100 text-red-800" },
+    ],
+    categoryName: "Discussion",
+    likeCount: 15,
+    commentCount: 3,
+    createdAt: "2025-08-21T10:00:00Z",
+    lastActivityAt: "2025-08-21T16:30:00Z",
+    isPinned: false,
+    content: `I found this piece at a local market and was struck by the mark on the bottom. I've attached a photo below.
+
+![Mark](https://placehold.co/600x300/e0e0e0/4d4d4d?text=Ceramic+Mark)
+
+It doesn't look like any of the standard Ming or Qing dynasty marks I'm familiar with. The calligraphy seems a bit more rustic. Does anyone have any ideas about its origin or age? Any help would be greatly appreciated!`,
+    viewCount: 258,
+    isOwned: true, // Mock: user owns this post
+    comments: [
+      {
+        id: 101,
+        authorNickname: "ClayMaster",
+        authorAvatarUrl: "https://placehold.co/40x40/f0fdf4/166534?text=C",
+        content:
+          "That's a fascinating mark! It has some characteristics of provincial kilns from the late Qing period, but the form is unusual. The lack of a clear reign mark suggests it wasn't for imperial use.",
+        createdAt: "2025-08-21T12:45:00Z",
+        likeCount: 5,
+        replies: [
+          {
+            id: 103,
+            authorNickname: "L. Chen",
+            authorAvatarUrl: "https://placehold.co/40x40/fef2f2/991b1b?text=L",
+            content:
+              "That's a great insight, thank you! I was thinking it might be a provincial piece. I'll do some more research into that area.",
+            createdAt: "2025-08-21T13:10:00Z",
+            likeCount: 2,
+            replies: [],
+            isOwned: true,
+          },
+        ],
+        isOwned: false,
+      },
+      {
+        id: 102,
+        authorNickname: "D. Miller",
+        authorAvatarUrl: "https://placehold.co/40x40/eff6ff/3730a3?text=D",
+        content:
+          "I agree with ClayMaster. It could also be a modern reproduction made in an older style. Have you had the material tested?",
+        createdAt: "2025-08-21T14:20:00Z",
+        likeCount: 1,
+        replies: [],
+        isOwned: false,
+      },
+    ],
+  };
+};
+
+// --- Route Definition with Loader ---
+
+export const Route = createFileRoute("/forum/$postId")({
+  loader: ({ params: { postId } }) => fetchPostDetails(postId),
+  component: PostDetailPage,
+});
+
+// --- Main Page Component ---
+
+function PostDetailPage() {
+  const postQuery = useQuery(() => ({
+    queryKey: ["forum-post", Route.useParams().postId],
+    queryFn: () => fetchPostDetails(Route.useParams().postId),
+  }));
+
+  return (
+    <div class="bg-gray-50 min-h-full">
+      <main class="max-w-4xl mx-auto py-8 px-4">
+        <Suspense fallback={<p>Loading post...</p>}>
+          <Show when={postQuery.data}>
+            {(post) => (
+              <>
+                {/* Post Header */}
+                <header class="mb-4">
+                  <h1 class="text-3xl font-bold text-gray-900">
+                    {post().title}
+                  </h1>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <For each={post().tags}>
+                      {(tag) => (
+                        <span
+                          class={`post-tag-capsule ${tag.color || "bg-gray-100 text-gray-800"}`}
+                        >
+                          {tag.name}
+                        </span>
+                      )}
+                    </For>
+                  </div>
+                </header>
+
+                {/* Main Post Card */}
+                <PostCard post={post()} />
+
+                {/* Comments Section */}
+                <section class="mt-8">
+                  <div class="mb-6 text-lg font-semibold text-gray-700">
+                    {post().commentCount} Comments, {post().viewCount} Views
+                  </div>
+                  <div class="space-y-6">
+                    <For each={post().comments}>
+                      {(comment) => <CommentCard comment={comment} />}
+                    </For>
+                  </div>
+                </section>
+
+                {/* Main Comment Editor */}
+                <section class="mt-12">
+                  <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                    Suggest an answer
+                  </h3>
+                  <CommentEditor />
+                </section>
+              </>
+            )}
+          </Show>
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+
+// --- Reusable Sub-Components ---
+
+const PostCard: Component<{ post: PostDetails }> = (props) => {
+  return (
+    <div class="post-card">
+      <CardHeader
+        authorNickname={props.post.authorNickname}
+        authorAvatarUrl={props.post.authorAvatarUrl}
+        categoryName={props.post.categoryName}
+        createdAt={props.post.createdAt}
+        isOwnContent={props.post.isOwned}
+      />
+      <div
+        class="card-content prose"
+        innerHTML={marked.parse(props.post.content)}
+      />
+      <CardFooter isPost={true} />
+    </div>
+  );
+};
+
+const CommentCard: Component<{ comment: ForumComment }> = (props) => {
+  const [isReplying, setIsReplying] = createSignal(false);
+
+  return (
+    <div class="flex gap-4">
+      <img
+        src={
+          props.comment.authorAvatarUrl ||
+          "https://placehold.co/40x40/E2E8F0/4A5568?text=?"
+        }
+        alt=""
+        class="w-10 h-10 rounded-full mt-1 flex-shrink-0"
+      />
+      <div class="flex-grow">
+        <div class="comment-card">
+          <CardHeader
+            authorNickname={props.comment.authorNickname}
+            createdAt={props.comment.createdAt}
+            isOwnContent={props.comment.isOwned}
+          />
+          <div
+            class="card-content prose-sm"
+            innerHTML={marked.parse(props.comment.content)}
+          />
+          <CardFooter isPost={false} onReplyClick={() => setIsReplying(true)} />
+        </div>
+
+        {/* Nested Replies */}
+        <Show when={props.comment.replies.length > 0}>
+          <div class="mt-4 space-y-4">
+            <For each={props.comment.replies}>
+              {(reply) => <CommentCard comment={reply} />}
+            </For>
+          </div>
+        </Show>
+
+        {/* Reply Editor */}
+        <Show when={isReplying()}>
+          <div class="mt-4">
+            <CommentEditor onCancel={() => setIsReplying(false)} />
+          </div>
+        </Show>
+      </div>
+    </div>
+  );
+};
+
+const CardHeader: Component<{
+  authorNickname: string;
+  authorAvatarUrl?: string;
+  categoryName?: string;
+  createdAt: string;
+  isOwnContent: boolean;
+}> = (props) => {
+  return (
+    <div class="card-header">
+      <div class="flex items-center gap-2">
+        <Show when={props.authorAvatarUrl}>
+          <img
+            src={props.authorAvatarUrl}
+            alt=""
+            class="w-6 h-6 rounded-full"
+          />
+        </Show>
+        <span class="font-semibold text-gray-800">{props.authorNickname}</span>
+        <Show when={props.categoryName}>
+          <span class="text-gray-500">posted in {props.categoryName}</span>
+        </Show>
+        <span class="text-gray-500">
+          on {formatLastActivity(props.createdAt)}
+        </span>
+      </div>
+      <CardMenu isOwnContent={props.isOwnContent} />
+    </div>
+  );
+};
+
+const CardFooter: Component<{ isPost: boolean; onReplyClick?: () => void }> = (
+  props,
+) => {
+  return (
+    <div class="card-footer">
+      <div class="flex items-center gap-4">
+        <button class="action-button">
+          <ThumbsUp size={18} /> Like
+        </button>
+        <Show when={props.isPost}>
+          <button class="action-button">
+            <BookmarkSimple size={18} /> Save
+          </button>
+        </Show>
+      </div>
+      <Show when={!props.isPost}>
+        <button class="reply-button" onClick={props.onReplyClick}>
+          Write a reply
+        </button>
+      </Show>
+    </div>
+  );
+};
+
+const CardMenu: Component<{ isOwnContent: boolean }> = (props) => {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger class="menu-trigger">
+        <DotsThree size={20} />
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content class="menu-content">
+          <DropdownMenu.Item class="menu-item">
+            <LinkIcon size={16} /> Copy Link
+          </DropdownMenu.Item>
+          <Show when={props.isOwnContent}>
+            <DropdownMenu.Item class="menu-item">
+              <PencilSimple size={16} /> Edit
+            </DropdownMenu.Item>
+          </Show>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+};
+
+const CommentEditor: Component<{ onCancel?: () => void }> = (props) => {
+  return (
+    <div class="editor-container">
+      <textarea
+        class="editor-textarea"
+        placeholder="Add your thoughts..."
+      ></textarea>
+      <div class="editor-actions">
+        <Show when={props.onCancel}>
+          <button class="cancel-button" onClick={props.onCancel}>
+            Cancel
+          </button>
+        </Show>
+        <button class="submit-button">Submit</button>
+      </div>
+    </div>
+  );
+};

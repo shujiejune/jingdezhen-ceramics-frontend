@@ -64,8 +64,8 @@ const allPosts: ForumPost[] = [
       { id: 2, name: "technique", color: "bg-blue-100 text-blue-800" },
     ],
     categoryName: "Events",
-    likes: 128,
-    comments: 42,
+    likeCount: 128,
+    commentCount: 42,
     createdAt: "2025-08-20T11:00:00Z",
     lastActivityAt: "2025-08-21T17:15:00Z",
     isPinned: true,
@@ -82,8 +82,8 @@ const allPosts: ForumPost[] = [
       { id: 4, name: "question", color: "bg-green-100 text-green-800" },
     ],
     categoryName: "Discussion",
-    likes: 15,
-    comments: 8,
+    likeCount: 15,
+    commentCount: 8,
     createdAt: "2025-08-21T10:00:00Z",
     lastActivityAt: "2025-08-21T16:30:00Z",
     isPinned: false,
@@ -100,8 +100,8 @@ const allPosts: ForumPost[] = [
       { id: 2, name: "technique", color: "bg-blue-100 text-blue-800" },
     ],
     categoryName: "Showcase",
-    likes: 88,
-    comments: 19,
+    likeCount: 88,
+    commentCount: 19,
     createdAt: "2025-08-20T09:00:00Z",
     lastActivityAt: "2025-08-21T15:05:00Z",
     isPinned: false,
@@ -115,8 +115,8 @@ const allPosts: ForumPost[] = [
     authorAvatarUrl: "https://placehold.co/40x40/f0fdf4/166534?text=C",
     tags: [{ id: 2, name: "technique", color: "bg-blue-100 text-blue-800" }],
     categoryName: "How To",
-    likes: 250,
-    comments: 67,
+    likeCount: 250,
+    commentCount: 67,
     createdAt: "2025-07-15T12:00:00Z",
     lastActivityAt: "2025-08-20T22:10:00Z",
     isPinned: false,
@@ -130,8 +130,8 @@ const allPosts: ForumPost[] = [
     authorAvatarUrl: "https://placehold.co/40x40/fefce8/854d0e?text=J",
     tags: [],
     categoryName: "Feedback",
-    likes: 5,
-    comments: 2,
+    likeCount: 5,
+    commentCount: 2,
     createdAt: "2024-06-10T18:00:00Z",
     lastActivityAt: "2025-08-19T11:00:00Z",
     isPinned: false,
@@ -431,7 +431,7 @@ const PostListItem: Component<{ post: ForumPost; isPinned?: boolean }> = (
     <div class="post-item" data-pinned={props.isPinned}>
       <div class="post-votes">
         <ArrowFatUp size={20} />
-        <span>{props.post.like}</span>
+        <span>{props.post.likeCount}</span>
       </div>
       <div class="post-main">
         <Link
@@ -467,7 +467,7 @@ const PostListItem: Component<{ post: ForumPost; isPinned?: boolean }> = (
       </div>
       <div class="post-comments">
         <ChatCircleDots size={18} />
-        <span>{props.post.comments}</span>
+        <span>{props.post.commentCount}</span>
       </div>
       <div class="post-activity">
         {formatLastActivity(props.post.lastActivityAt)}
