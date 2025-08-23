@@ -1,7 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/solid-router";
-import { For, Show, createMemo, createSignal } from "solid-js";
+import { useQuery } from "@tanstack/solid-query";
+import { For, Show, Suspense, createMemo, createSignal } from "solid-js";
 import { PageHeader } from "~/components/layout/PageHeader";
-import { CaretUp, ChatCircleDots, Funnel } from "~/components/icons/Phosphor";
+import {
+  ArrowFatUp,
+  ChatCircleDots,
+  Funnel,
+  PushPin,
+  CaretDown,
+  CaretUp,
+  MagnifyingGlass,
+} from "~/components/icons/Phosphor";
 import { formatLastActivity } from "~/lib/utils";
 import { Link } from "@tanstack/solid-router";
 import * as Select from "@kobalte/core/select";
@@ -131,6 +140,71 @@ const allPosts: ForumPost[] = [
   // ... add more posts for pagination
 ];
 
+// --- Data Fetching Logic ---
+
+// This object will hold the response from the backend
+interface PostsApiResponse {
+  posts: ForumPost[];
+  totalCount: number;
+}
+
+// This function simulates calling backend API
+const fetchPosts = async (filters: {
+  page: number;
+  category: Category;
+  sort: SortOption;
+  q?: string;
+  tag?: string;
+}): Promise<PostsApiResponse> => {
+  console.log("Fetching posts with filters:", filters);
+  // In a real app, you would build a URL query string from the filters
+  // const response = await fetch(`/api/posts?page=${filters.page}&...`);
+  // const data = await response.json();
+  // return data;
+
+  // For now, we return mock data
+  await new Promise((r) => setTimeout(r, 300)); // Simulate network delay
+  return {
+    posts: [
+      {
+        id: 1,
+        title: "Glazing Techniques Summit Next Month!",
+        authorNickname: "Admin",
+        authorAvatarUrl: "https://placehold.co/40x40/E2E8F0/4A5568?text=A",
+        tags: [
+          { id: 1, name: "exhibition" },
+          { id: 2, name: "technique" },
+        ],
+        categoryName: "Events",
+        upvotes: 128,
+        comments: 42,
+        created_at: "2025-08-20T11:00:00Z",
+        lastActivityAt: "2025-08-21T17:15:00Z",
+        isPinned: true,
+        content: "",
+      },
+      {
+        id: 2,
+        title: "Help Identifying This Mark",
+        authorNickname: "L. Chen",
+        authorAvatarUrl: "https://placehold.co/40x40/fef2f2/991b1b?text=L",
+        tags: [
+          { id: 3, name: "history" },
+          { id: 4, name: "question" },
+        ],
+        categoryName: "Discussion",
+        upvotes: 15,
+        comments: 8,
+        createdAt: "2025-08-21T10:00:00Z",
+        lastActivityAt: "2025-08-21T16:30:00Z",
+        isPinned: false,
+        content: "",
+      },
+    ],
+    totalCount: 2,
+  };
+};
+
 // --- Route Definition with Search Param Validation ---
 
 const forumSearchSchema = z.object({
@@ -138,7 +212,8 @@ const forumSearchSchema = z.object({
   category: z.enum(categories).default("All").catch("All"),
   sort: z.enum(sortOptions).default("Latest Activity").catch("Latest Activity"),
   q: z.string().optional(),
-  tags: z.boolean().optional(),
+  view: z.enum(["posts", "tags"]).default("posts").catch("posts"),
+  tag: z.string().optional(),
 });
 
 export const Route = createFileRoute("/forum/")({
@@ -150,80 +225,35 @@ export const Route = createFileRoute("/forum/")({
 
 function ForumPage() {
   const searchParams = Route.useSearch();
-  const navigate = useNavigate({ from: Route.fullPath });
-
-  const postsPerPage = 10;
-
-  const filteredAndSortedPosts = createMemo(() => {
-    let posts = [...allPosts.filter((p) => !p.isPinned)];
-    const query = searchParams().q?.toLowerCase();
-    const category = searchParams().category;
-    const sort = searchParams().sort;
-
-    // Filter by category
-    if (category && category !== "All") {
-      posts = posts.filter((p) => p.categoryName === category);
-    }
-    // Filter by search query
-    if (query) {
-      posts = posts.filter(
-        (p) =>
-          p.title.toLowerCase().includes(query) ||
-          p.tags.some((t) => t.name.includes(query)),
-      );
-    }
-    // Sort
-    switch (sort) {
-      case "Newest":
-        posts.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-        break;
-      case "Oldest":
-        posts.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        );
-        break;
-      case "Most Upvotes":
-        posts.sort((a, b) => b.upvotes - a.upvotes);
-        break;
-      case "Most Comments":
-        posts.sort((a, b) => b.comments - a.comments);
-        break;
-      case "Latest Activity":
-      default:
-        posts.sort(
-          (a, b) =>
-            new Date(b.lastActivityAt).getTime() -
-            new Date(a.lastActivityAt).getTime(),
-        );
-        break;
-    }
-    return posts;
-  });
-
-  const paginatedPosts = createMemo(() => {
-    const page = searchParams().page;
-    const start = (page - 1) * postsPerPage;
-    const end = start + postsPerPage;
-    return filteredAndSortedPosts().slice(start, end);
-  });
-
-  const totalPages = createMemo(() =>
-    Math.ceil(filteredAndSortedPosts().length / postsPerPage),
-  );
+  // This is the core of our data-driven page.
+  // `createQuery` will automatically re-fetch data whenever `searchParams()` changes.
+  const postsQuery = useQuery(() => ({
+    queryKey: ["forum-posts", searchParams()], // Unique key for this set of filters
+    queryFn: () => fetchPosts(searchParams()),
+    placeholderData: (prev) => prev, // Keep showing old data while new data is loading
+  }));
 
   return (
-    <div class="bg-gray-50 min-h-full">
+    <div class="bg-gray-50 min-h-full flex flex-col">
       <PageHeader
         title="Forum"
         subtitle="Connect with fellow ceramic enthusiasts, share your work, and ask questions."
       />
-      <div class="forum-layout">
+      <div class="forum-layout flex-grow">
         <Sidebar />
-        <MainContent posts={paginatedPosts()} totalPages={totalPages()} />
+        <main class="main-content">
+          <Suspense fallback={<p>Loading...</p>}>
+            <Show
+              when={searchParams().view === "posts"}
+              fallback={<TagCloud />}
+            >
+              <MainContent
+                posts={postsQuery.data?.posts ?? []}
+                totalCount={postsQuery.data?.totalCount ?? 0}
+              />
+            </Show>
+          </Suspense>
+        </main>
       </div>
     </div>
   );
@@ -236,41 +266,21 @@ const Sidebar: Component = () => {
   const navigate = useNavigate({ from: Route.fullPath });
 
   const handleCategoryClick = (category: Category) => {
-    navigate({ search: (prev) => ({ ...prev, category, page: 1 }) });
-  };
-
-  const handleSearch = (e: Event) => {
-    const value = (e.currentTarget as HTMLInputElement).value;
     navigate({
-      search: (prev) => ({ ...prev, q: value || undefined, page: 1 }),
+      search: (prev) => ({ ...prev, category, page: 1, view: "posts" }),
     });
   };
 
-  const toggleTags = () => {
-    navigate({ search: (prev) => ({ ...prev, tags: !prev.tags }) });
+  const showTagsView = () => {
+    navigate({ search: (prev) => ({ ...prev, view: "tags" }) });
   };
 
   return (
     <aside class="sidebar">
-      <input
-        type="search"
-        placeholder="Search posts..."
-        class="search-bar"
-        onInput={handleSearch}
-        value={searchParams().q || ""}
-      />
-
       <div class="sidebar-section">
-        <button class="sidebar-title-button" onClick={toggleTags}>
+        <button class="sidebar-title-button" onClick={showTagsView}>
           TAGS
         </button>
-        <Show when={searchParams().tags}>
-          <div class="tag-cloud">
-            <For each={allTags}>
-              {(tag) => <button class="tag">{tag}</button>}
-            </For>
-          </div>
-        </Show>
       </div>
 
       <div class="sidebar-section">
@@ -280,7 +290,10 @@ const Sidebar: Component = () => {
             {(cat) => (
               <button
                 class="category-button"
-                data-active={searchParams().category === cat}
+                data-active={
+                  searchParams().category === cat &&
+                  searchParams().view === "posts"
+                }
                 onClick={() => handleCategoryClick(cat)}
               >
                 {cat}
@@ -293,65 +306,34 @@ const Sidebar: Component = () => {
   );
 };
 
-const MainContent: Component<{ posts: ForumPost[]; totalPages: number }> = (
+const MainContent: Component<{ posts: ForumPost[]; totalCount: number }> = (
   props,
 ) => {
   const searchParams = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-
-  const handleSortChange = (sort: SortOption | null) => {
-    if (sort) {
-      navigate({ search: (prev) => ({ ...prev, sort, page: 1 }) });
-    }
-  };
+  const postsPerPage = 20;
+  const totalPages = () => Math.ceil(props.totalCount / postsPerPage);
 
   const handlePageChange = (page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
   };
 
-  const pinnedPosts = allPosts.filter((p) => p.isPinned);
+  // Pinned posts would likely be a separate API call in a real app
+  const pinnedPosts: ForumPost[] = []; // Assuming pinned posts are handled separately
 
   return (
-    <main class="main-content">
-      <div class="filter-bar">
-        <span class="post-count">{props.posts.length} results</span>
-        <Select.Root<SortOption>
-          options={[...sortOptions]}
-          value={searchParams().sort}
-          onChange={handleSortChange}
-          itemComponent={(props) => (
-            <Select.Item item={props.item} class="select-item">
-              <Select.ItemLabel>{props.item.rawValue}</Select.ItemLabel>
-            </Select.Item>
-          )}
-        >
-          <Select.Trigger class="select-trigger">
-            <Select.Value<SortOption>>
-              {(state) => state.selectedOption()}
-            </Select.Value>
-          </Select.Trigger>
-          <Select.Portal>
-            <Select.Content class="select-content">
-              <Select.Listbox />
-            </Select.Content>
-          </Select.Portal>
-        </Select.Root>
-      </div>
-
+    <>
+      <FilterBar />
       <div class="post-list">
-        {/* Pinned Posts */}
         <For each={pinnedPosts}>
           {(post) => <PostListItem post={post} isPinned={true} />}
         </For>
-
-        {/* Regular Posts */}
         <For each={props.posts}>{(post) => <PostListItem post={post} />}</For>
       </div>
-
-      <Show when={props.totalPages > 1}>
+      <Show when={totalPages() > 1}>
         <Pagination.Root
           class="pagination"
-          count={props.totalPages}
+          count={totalPages()}
           page={searchParams().page}
           onPageChange={handlePageChange}
           itemComponent={(props) => (
@@ -367,7 +349,114 @@ const MainContent: Component<{ posts: ForumPost[]; totalPages: number }> = (
           <Pagination.Next class="page-next">Next</Pagination.Next>
         </Pagination.Root>
       </Show>
-    </main>
+    </>
+  );
+};
+
+const FilterBar: Component = () => {
+  const searchParams = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+
+  const handleSortChange = (sort: SortOption | null) => {
+    if (sort) {
+      navigate({ search: (prev) => ({ ...prev, sort, page: 1 }) });
+    }
+  };
+
+  const handleSearch = (e: Event) => {
+    const value = (e.currentTarget as HTMLInputElement).value;
+    navigate({
+      search: (prev) => ({ ...prev, q: value || undefined, page: 1 }),
+    });
+  };
+
+  return (
+    <div class="filter-bar">
+      <div class="search-wrapper">
+        <MagnifyingGlass size={20} class="search-icon" />
+        <input
+          type="search"
+          placeholder="Search posts..."
+          class="search-bar"
+          onInput={handleSearch}
+          value={searchParams().q || ""}
+        />
+      </div>
+      <div class="filter-actions">
+        <Select.Root<SortOption>
+          options={[...sortOptions]}
+          value={searchParams().sort}
+          onChange={handleSortChange}
+          itemComponent={(props) => (
+            <Select.Item item={props.item} class="select-item">
+              <Select.ItemLabel>{props.item.rawValue}</Select.ItemLabel>
+            </Select.Item>
+          )}
+        >
+          <Select.Trigger class="select-trigger">
+            <Funnel size={16} />
+            <span class="sort-by-text">Sort by:</span>
+            <Select.Value<SortOption>>
+              {(state) => state.selectedOption()}
+            </Select.Value>
+            <Select.Icon class="select-caret">
+              {(state) => (
+                <Show when={state.isOpen()} fallback={<CaretDown />}>
+                  {" "}
+                  <CaretUp />{" "}
+                </Show>
+              )}
+            </Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content class="select-content">
+              <Select.Listbox />
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>
+        <Link to="/forum/new" class="new-post-button">
+          New Post
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+const TagCloud: Component = () => {
+  // In a real app, tags and their counts would be fetched from an API
+  const tagsWithCounts = [
+    { name: "blue-and-white", count: 58 },
+    { name: "celadon", count: 42 },
+    { name: "glazing", count: 95 },
+    { name: "technique", count: 120 },
+    { name: "history", count: 30 },
+    { name: "modern-art", count: 75 },
+  ];
+
+  const navigate = useNavigate({ from: Route.fullPath });
+  const handleTagClick = (tagName: string) => {
+    navigate({ search: { view: "posts", tag: tagName, page: 1 } });
+  };
+
+  return (
+    <div class="tag-cloud-container">
+      <h2 class="tag-cloud-title">Explore Tags</h2>
+      <div class="tag-cloud">
+        <For each={tagsWithCounts}>
+          {(tag) => (
+            <button
+              class="tag"
+              style={{
+                "font-size": `${Math.min(1.2 + tag.count * 0.01, 2.5)}rem`,
+              }}
+              onClick={() => handleTagClick(tag.name)}
+            >
+              {tag.name}
+            </button>
+          )}
+        </For>
+      </div>
+    </div>
   );
 };
 
@@ -377,16 +466,20 @@ const PostListItem: Component<{ post: ForumPost; isPinned?: boolean }> = (
   return (
     <div class="post-item" data-pinned={props.isPinned}>
       <div class="post-votes">
-        <CaretUp size={20} />
+        <ArrowFatUp size={20} />
         <span>{props.post.upvotes}</span>
       </div>
       <div class="post-main">
         <Link
           to="/forum/$postId"
-          params={{ postId: props.post.id }}
+          params={{ postId: props.post.id.toString() }}
           class="post-title-link"
         >
-          {props.isPinned && <span class="pinned-badge">PINNED</span>}
+          {props.isPinned && (
+            <span class="pinned-badge">
+              <PushPin size={20} />
+            </span>
+          )}
           {props.post.title}
         </Link>
         <div class="post-tags">
