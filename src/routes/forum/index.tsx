@@ -34,7 +34,7 @@ const sortOptions = [
   "Latest Activity",
   "Newest",
   "Oldest",
-  "Most Upvotes",
+  "Most Likes",
   "Most Comments",
 ] as const;
 const allTags = [
@@ -64,7 +64,7 @@ const allPosts: ForumPost[] = [
       { id: 2, name: "technique", color: "bg-blue-100 text-blue-800" },
     ],
     categoryName: "Events",
-    upvotes: 128,
+    likes: 128,
     comments: 42,
     createdAt: "2025-08-20T11:00:00Z",
     lastActivityAt: "2025-08-21T17:15:00Z",
@@ -82,7 +82,7 @@ const allPosts: ForumPost[] = [
       { id: 4, name: "question", color: "bg-green-100 text-green-800" },
     ],
     categoryName: "Discussion",
-    upvotes: 15,
+    likes: 15,
     comments: 8,
     createdAt: "2025-08-21T10:00:00Z",
     lastActivityAt: "2025-08-21T16:30:00Z",
@@ -100,7 +100,7 @@ const allPosts: ForumPost[] = [
       { id: 2, name: "technique", color: "bg-blue-100 text-blue-800" },
     ],
     categoryName: "Showcase",
-    upvotes: 88,
+    likes: 88,
     comments: 19,
     createdAt: "2025-08-20T09:00:00Z",
     lastActivityAt: "2025-08-21T15:05:00Z",
@@ -115,7 +115,7 @@ const allPosts: ForumPost[] = [
     authorAvatarUrl: "https://placehold.co/40x40/f0fdf4/166534?text=C",
     tags: [{ id: 2, name: "technique", color: "bg-blue-100 text-blue-800" }],
     categoryName: "How To",
-    upvotes: 250,
+    likes: 250,
     comments: 67,
     createdAt: "2025-07-15T12:00:00Z",
     lastActivityAt: "2025-08-20T22:10:00Z",
@@ -130,7 +130,7 @@ const allPosts: ForumPost[] = [
     authorAvatarUrl: "https://placehold.co/40x40/fefce8/854d0e?text=J",
     tags: [],
     categoryName: "Feedback",
-    upvotes: 5,
+    likes: 5,
     comments: 2,
     createdAt: "2024-06-10T18:00:00Z",
     lastActivityAt: "2025-08-19T11:00:00Z",
@@ -166,43 +166,8 @@ const fetchPosts = async (filters: {
   // For now, we return mock data
   await new Promise((r) => setTimeout(r, 300)); // Simulate network delay
   return {
-    posts: [
-      {
-        id: 1,
-        title: "Glazing Techniques Summit Next Month!",
-        authorNickname: "Admin",
-        authorAvatarUrl: "https://placehold.co/40x40/E2E8F0/4A5568?text=A",
-        tags: [
-          { id: 1, name: "exhibition" },
-          { id: 2, name: "technique" },
-        ],
-        categoryName: "Events",
-        upvotes: 128,
-        comments: 42,
-        createdAt: "2025-08-20T11:00:00Z",
-        lastActivityAt: "2025-08-21T17:15:00Z",
-        isPinned: true,
-        content: "",
-      },
-      {
-        id: 2,
-        title: "Help Identifying This Mark",
-        authorNickname: "L. Chen",
-        authorAvatarUrl: "https://placehold.co/40x40/fef2f2/991b1b?text=L",
-        tags: [
-          { id: 3, name: "history" },
-          { id: 4, name: "question" },
-        ],
-        categoryName: "Discussion",
-        upvotes: 15,
-        comments: 8,
-        createdAt: "2025-08-21T10:00:00Z",
-        lastActivityAt: "2025-08-21T16:30:00Z",
-        isPinned: false,
-        content: "",
-      },
-    ],
-    totalCount: 2,
+    posts: allPosts,
+    totalCount: 5,
   };
 };
 
@@ -466,7 +431,7 @@ const PostListItem: Component<{ post: ForumPost; isPinned?: boolean }> = (
     <div class="post-item" data-pinned={props.isPinned}>
       <div class="post-votes">
         <ArrowFatUp size={20} />
-        <span>{props.post.upvotes}</span>
+        <span>{props.post.like}</span>
       </div>
       <div class="post-main">
         <Link

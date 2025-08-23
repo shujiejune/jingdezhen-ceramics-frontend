@@ -14,7 +14,7 @@ export interface ForumPost {
   content: string;
   isPinned: boolean;
   comments: number;
-  upvotes: number; // This is the "upvote" count from the backend
+  likes: number; // This is the "upvote" count from the backend
   lastActivityAt: string; // time.Time becomes a string in JSON
   createdAt: string;
   tags: Tag[];
