@@ -1,12 +1,13 @@
-import { onMount, onCleanup, Component, Show } from "solid-js";
+import { onMount, onCleanup, Component } from "solid-js";
 import EasyMDE from "easymde";
-import "easymde/dist/easymde.min.css"; // Import the editor's styles
+import "easymde/dist/easymde.min.css";
+import "./MarkdownEditor.css";
+import { MarkdownLogo, Image } from "~/components/icons/Phosphor";
 
 interface MarkdownEditorProps {
   initialValue?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
-  onCancel?: () => void;
 }
 
 export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
@@ -18,25 +19,28 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
       easymde = new EasyMDE({
         element: textareaRef,
         initialValue: props.initialValue || "",
-        placeholder: props.placeholder || "Write your content here...",
+        placeholder:
+          props.placeholder ||
+          "Ask a question, start a conversation, or make an announcement",
         spellChecker: false,
-        status: false, // Hides the status bar (word count, etc.)
         toolbar: [
+          "heading",
           "bold",
           "italic",
-          "heading",
           "|",
           "quote",
+          "code",
+          "link",
+          "|",
           "unordered-list",
           "ordered-list",
-          "|",
-          "link",
-          "image",
+          "strikethrough", // Strikethrough is a good addition
           "|",
           "preview",
           "side-by-side",
-          "fullscreen",
         ],
+        // Hide the default status bar, create our own footer
+        status: false,
       });
 
       easymde.codemirror.on("change", () => {
@@ -47,22 +51,29 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
     }
   });
 
-  // Clean up the editor instance when the component is removed
   onCleanup(() => {
     easymde?.toTextArea();
     easymde = undefined;
   });
 
   return (
-    <div class="editor-wrapper">
+    <div class="easymde-container">
       <textarea ref={textareaRef} />
-      <div class="editor-actions">
-        <Show when={props.onCancel}>
-          <button class="cancel-button" onClick={props.onCancel}>
-            Cancel
-          </button>
-        </Show>
-        <button class="submit-button">Submit</button>
+      {/* --- Custom Footer --- */}
+      <div class="editor-footer">
+        <a
+          href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link"
+        >
+          <MarkdownLogo size={16} />
+          <span>Markdown is supported</span>
+        </a>
+        <button class="footer-button">
+          <Image size={16} />
+          <span>Paste, drop, or click to add images</span>
+        </button>
       </div>
     </div>
   );

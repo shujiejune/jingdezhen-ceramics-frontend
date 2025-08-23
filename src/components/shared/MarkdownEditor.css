@@ -1,0 +1,48 @@
+/* Custom styles to override EasyMDE defaults and style the footer */
+.easymde-container {
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.5rem; /* rounded-lg */
+  overflow: hidden;
+}
+
+.easymde-container .EasyMDEContainer {
+  border: none;
+}
+
+.easymde-container .editor-toolbar {
+  border-bottom: 1px solid #d1d5db;
+  background-color: #f9fafb; /* gray-50 */
+}
+
+.easymde-container .CodeMirror {
+  border: none;
+  min-height: 200px;
+}
+
+.editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background-color: #f9fafb; /* gray-50 */
+  border-top: 1px solid #d1d5db;
+  font-size: 0.875rem; /* text-sm */
+  color: #6b7280; /* gray-500 */
+}
+
+.footer-link,
+.footer-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.footer-link:hover,
+.footer-button:hover {
+  color: #1f2937; /* gray-800 */
+}

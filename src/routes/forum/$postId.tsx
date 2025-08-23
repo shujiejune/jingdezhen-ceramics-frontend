@@ -4,12 +4,8 @@ import { For, Show, Suspense, createSignal } from "solid-js";
 import { marked } from "marked";
 import * as DropdownMenu from "@kobalte/core/dropdown-menu";
 import type { Component, JSX } from "solid-js";
-
-// Import shared types and utils
 import { type ForumPost, type Tag } from "~/lib/types";
 import { formatLastActivity } from "~/lib/utils";
-
-// Import custom icons
 import {
   ThumbsUp,
   BookmarkSimple,
