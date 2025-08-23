@@ -60,8 +60,8 @@ const allPosts: ForumPost[] = [
     authorNickname: "Admin",
     authorAvatarUrl: "https://placehold.co/40x40/E2E8F0/4A5568?text=A",
     tags: [
-      { id: 1, name: "exhibition" },
-      { id: 2, name: "technique" },
+      { id: 1, name: "exhibition", color: "bg-purple-100 text-purple-800" },
+      { id: 2, name: "technique", color: "bg-blue-100 text-blue-800" },
     ],
     categoryName: "Events",
     upvotes: 128,
@@ -78,8 +78,8 @@ const allPosts: ForumPost[] = [
     authorNickname: "L. Chen",
     authorAvatarUrl: "https://placehold.co/40x40/fef2f2/991b1b?text=L",
     tags: [
-      { id: 3, name: "history" },
-      { id: 4, name: "question" },
+      { id: 3, name: "history", color: "bg-yellow-100 text-yellow-800" },
+      { id: 4, name: "question", color: "bg-green-100 text-green-800" },
     ],
     categoryName: "Discussion",
     upvotes: 15,
@@ -96,8 +96,8 @@ const allPosts: ForumPost[] = [
     authorNickname: "D. Miller",
     authorAvatarUrl: "https://placehold.co/40x40/eff6ff/3730a3?text=D",
     tags: [
-      { id: 1, name: "exhibition" },
-      { id: 2, name: "technique" },
+      { id: 1, name: "exhibition", color: "bg-purple-100 text-purple-800" },
+      { id: 2, name: "technique", color: "bg-blue-100 text-blue-800" },
     ],
     categoryName: "Showcase",
     upvotes: 88,
@@ -113,7 +113,7 @@ const allPosts: ForumPost[] = [
     title: "How To: Properly Wedge Clay for Throwing",
     authorNickname: "ClayMaster",
     authorAvatarUrl: "https://placehold.co/40x40/f0fdf4/166534?text=C",
-    tags: [{ id: 2, name: "technique" }],
+    tags: [{ id: 2, name: "technique", color: "bg-blue-100 text-blue-800" }],
     categoryName: "How To",
     upvotes: 250,
     comments: 67,
@@ -483,7 +483,13 @@ const PostListItem: Component<{ post: ForumPost; isPinned?: boolean }> = (
         </Link>
         <div class="post-tags">
           <For each={props.post.tags}>
-            {(tag) => <span class="post-tag">{tag.name}</span>}
+            {(tag) => (
+              <span
+                class={`post-tag-capsule ${tag.color || "bg-gray-100 text-gray-800"}`}
+              >
+                {tag.name}
+              </span>
+            )}
           </For>
         </div>
       </div>

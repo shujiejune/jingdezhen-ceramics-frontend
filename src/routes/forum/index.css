@@ -214,11 +214,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-top: 0.25rem;
 }
 
-.post-tag {
-  font-size: 0.75rem;
-  color: #64748b;
+.post-tag-capsule {
+  display: inline-block;
+  padding: 0.125rem 0.625rem; /* py-0.5 px-2.5 */
+  border-radius: 9999px; /* rounded-full */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 500; /* font-medium */
+  line-height: 1.5;
 }
 
 .author-avatar {
