@@ -1,21 +1,34 @@
-import { onMount, onCleanup, Component } from "solid-js";
-import EasyMDE from "easymde";
+import { onMount, onCleanup, Component, Show } from "solid-js";
 import "easymde/dist/easymde.min.css";
 import "./MarkdownEditor.css";
 import { MarkdownLogo, Image } from "~/components/icons/Phosphor";
+import type EasyMDE from "easymde";
 
 interface MarkdownEditorProps {
   initialValue?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
+  onCancel?: () => void;
+  onSubmit?: () => void;
 }
 
 export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
   let textareaRef: HTMLTextAreaElement | undefined;
   let easymde: EasyMDE | undefined;
 
-  onMount(() => {
+  // onMount only runs in the browser, AFTER the server has rendered the page.
+  onMount(async () => {
     if (textareaRef) {
+      // We dynamically import the library ONLY on the client.
+      const EasyMDE = (await import("easymde")).default;
+      const EasyMDECSS = (await import("easymde/dist/easymde.min.css?inline"))
+        .default;
+
+      // Inject styles into the document's head
+      const style = document.createElement("style");
+      style.innerHTML = EasyMDECSS;
+      document.head.appendChild(style);
+
       easymde = new EasyMDE({
         element: textareaRef,
         initialValue: props.initialValue || "",
@@ -34,12 +47,11 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
           "|",
           "unordered-list",
           "ordered-list",
-          "strikethrough", // Strikethrough is a good addition
+          "strikethrough",
           "|",
           "preview",
           "side-by-side",
         ],
-        // Hide the default status bar, create our own footer
         status: false,
       });
 
@@ -58,7 +70,11 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
 
   return (
     <div class="easymde-container">
-      <textarea ref={textareaRef} />
+      <textarea
+        ref={textareaRef}
+        class="initial-textarea"
+        placeholder={props.placeholder}
+      />
       {/* --- Custom Footer --- */}
       <div class="editor-footer">
         <a
@@ -75,6 +91,20 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
           <span>Paste, drop, or click to add images</span>
         </button>
       </div>
+      <Show when={props.onCancel || props.onSubmit}>
+        <div class="editor-actions">
+          <Show when={props.onCancel}>
+            <button class="cancel-button" onClick={props.onCancel}>
+              Cancel
+            </button>
+          </Show>
+          <Show when={props.onSubmit}>
+            <button class="submit-button" onClick={props.onSubmit}>
+              Submit
+            </button>
+          </Show>
+        </div>
+      </Show>
     </div>
   );
 };

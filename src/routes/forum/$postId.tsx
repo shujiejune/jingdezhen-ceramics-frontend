@@ -4,8 +4,9 @@ import { For, Show, Suspense, createSignal } from "solid-js";
 import { marked } from "marked";
 import * as DropdownMenu from "@kobalte/core/dropdown-menu";
 import type { Component, JSX } from "solid-js";
-import { type ForumPost, type Tag } from "~/lib/types";
+import type { ForumPost, Tag } from "~/lib/types";
 import { formatLastActivity } from "~/lib/utils";
+import { MarkdownEditor } from "~/components/shared/MarkdownEditor";
 import {
   ThumbsUp,
   BookmarkSimple,
@@ -170,7 +171,7 @@ function PostDetailPage() {
                   <h3 class="text-xl font-semibold text-gray-800 mb-4">
                     Suggest an answer
                   </h3>
-                  <CommentEditor />
+                  <MarkdownEditor placeholder="Contribute to the discussion..." />
                 </section>
               </>
             )}
@@ -238,7 +239,10 @@ const CommentCard: Component<{ comment: ForumComment }> = (props) => {
         {/* Reply Editor */}
         <Show when={isReplying()}>
           <div class="mt-4">
-            <CommentEditor onCancel={() => setIsReplying(false)} />
+            <MarkdownEditor
+              placeholder="Write a reply..."
+              onCancel={() => setIsReplying(false)}
+            />
           </div>
         </Show>
       </div>
@@ -315,24 +319,5 @@ const CardMenu: Component<{ isOwnContent: boolean }> = (props) => {
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
-  );
-};
-
-const CommentEditor: Component<{ onCancel?: () => void }> = (props) => {
-  return (
-    <div class="editor-container">
-      <textarea
-        class="editor-textarea"
-        placeholder="Add your thoughts..."
-      ></textarea>
-      <div class="editor-actions">
-        <Show when={props.onCancel}>
-          <button class="cancel-button" onClick={props.onCancel}>
-            Cancel
-          </button>
-        </Show>
-        <button class="submit-button">Submit</button>
-      </div>
-    </div>
   );
 };
