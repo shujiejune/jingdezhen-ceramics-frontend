@@ -77,19 +77,22 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
       />
       {/* --- Custom Footer --- */}
       <div class="editor-footer">
-        <a
-          href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="footer-link"
-        >
-          <MarkdownLogo size={16} />
-          <span>Markdown is supported</span>
-        </a>
-        <button class="footer-button">
-          <Image size={16} />
-          <span>Paste, drop, or click to add images</span>
-        </button>
+        <div class="footer-actions-group">
+          <a
+            href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link"
+          >
+            <MarkdownLogo size={16} />
+            <span>Markdown is supported</span>
+          </a>
+          <div class="footer-separator" />
+          <button class="footer-button">
+            <Image size={16} />
+            <span>Paste, drop, or click to add images</span>
+          </button>
+        </div>
       </div>
       <Show when={props.onCancel || props.onSubmit}>
         <div class="editor-actions">
@@ -98,11 +101,9 @@ export const MarkdownEditor: Component<MarkdownEditorProps> = (props) => {
               Cancel
             </button>
           </Show>
-          <Show when={props.onSubmit}>
-            <button class="submit-button" onClick={props.onSubmit}>
-              Submit
-            </button>
-          </Show>
+          <button class="submit-button" onClick={props.onSubmit}>
+            Submit
+          </button>
         </div>
       </Show>
     </div>
