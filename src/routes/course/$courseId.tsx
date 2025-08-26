@@ -227,20 +227,16 @@ const ChapterAccordion: Component<{
     <Accordion.Item class="accordion-item" value={props.chapter.id.toString()}>
       <Accordion.Header class="accordion-header">
         <Accordion.Trigger class="accordion-trigger">
-          {(state) => (
-            <>
-              <div class="flex items-center gap-2">
-                <Show when={state.isOpen()} fallback={<CaretDown />}>
-                  {" "}
-                  <CaretUp />{" "}
-                </Show>
-                <span class="font-bold">{props.chapter.title}</span>
-              </div>
-              <span class="text-sm text-gray-600">
-                {props.chapter.contentBlocks.length} lectures
-              </span>
-            </>
-          )}
+          <div class="flex items-center gap-2">
+            <div class="accordion-caret">
+              <CaretDown class="caret-down" />
+              <CaretUp class="caret-up" />
+            </div>
+            <span class="font-bold">{props.chapter.title}</span>
+          </div>
+          <span class="text-sm text-gray-600">
+            {props.chapter.contentBlocks.length} lectures
+          </span>
         </Accordion.Trigger>
       </Accordion.Header>
       <Accordion.Content class="accordion-content">

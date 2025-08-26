@@ -95,6 +95,19 @@
 .accordion-trigger:hover {
   background-color: #f3f4f6; /* gray-100 */
 }
+.accordion-trigger .caret-up {
+  display: none;
+}
+.accordion-trigger .caret-down {
+  display: block;
+}
+/* When the trigger has the data-expanded attribute, flip the visibility */
+.accordion-trigger[data-expanded="true"] .caret-up {
+  display: block;
+}
+.accordion-trigger[data-expanded="true"] .caret-down {
+  display: none;
+}
 .accordion-content {
   padding: 0;
   background-color: white;
