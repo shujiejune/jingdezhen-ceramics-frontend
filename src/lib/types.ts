@@ -20,3 +20,10 @@ export interface ForumPost {
   tags: Tag[];
   // User-specific fields can be added here
 }
+
+export interface Note {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+}

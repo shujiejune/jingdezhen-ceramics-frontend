@@ -18,7 +18,6 @@ import * as Pagination from "@kobalte/core/pagination";
 import { z } from "zod";
 import type { Component, JSX } from "solid-js";
 import type { ForumPost } from "~/lib/types";
-import type { SelectIconRenderProps } from "@kobalte/core/select";
 
 // --- Data, Types, and Helper Functions ---
 
