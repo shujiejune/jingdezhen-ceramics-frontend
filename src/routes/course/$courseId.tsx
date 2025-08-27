@@ -17,39 +17,10 @@ import {
   X,
 } from "~/components/icons/Phosphor";
 import { formatLastActivity } from "~/lib/utils";
-
-// --- Data Fetching and Types ---
-
-type ContentBlockType = "video" | "reading" | "assignment" | "quiz";
-
-interface ContentBlock {
-  id: number;
-  type: ContentBlockType;
-  title: string;
-  duration?: string; // e.g., "03:52"
-  isPreviewable?: boolean;
-  videoUrl?: string;
-}
-
-interface CourseChapter {
-  id: number;
-  title: string;
-  contentBlocks: ContentBlock[];
-}
-
-interface CourseDetails {
-  id: number;
-  title: string;
-  instructorName: string;
-  lastUpdatedAt: string; // ISO Date String
-  language: string;
-  thumbnailUrl: string;
-  description: string;
-  chapters: CourseChapter[];
-}
+import { CourseChapter, Course } from "~/lib/types";
 
 // Mock function to fetch course details
-const fetchCourseDetails = async (courseId: string): Promise<CourseDetails> => {
+const fetchCourseDetails = async (courseId: string): Promise<Course> => {
   console.log(`Fetching details for course ID: ${courseId}`);
   await new Promise((r) => setTimeout(r, 500));
   return {
@@ -141,7 +112,7 @@ function CourseDetailPage() {
 
 // --- Sub-Components ---
 
-const CourseBanner: Component<{ course: CourseDetails }> = (props) => (
+const CourseBanner: Component<{ course: Course }> = (props) => (
   <header class="course-banner">
     <div class="banner-content">
       <h1 class="text-4xl font-bold">{props.course.title}</h1>

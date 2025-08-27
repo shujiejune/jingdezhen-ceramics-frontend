@@ -27,3 +27,41 @@ export interface Note {
   content: string;
   createdAt: string;
 }
+
+export type ContentBlockType = "video" | "reading" | "assignment" | "quiz";
+
+export interface ContentBlock {
+  id: number;
+  type: ContentBlockType;
+  title: string;
+  duration?: string; // e.g., "03:52"
+  isPreviewable?: boolean;
+  videoUrl?: string;
+}
+
+export interface Announcement {
+  id: number;
+  authorNickname: string;
+  authorAvatarUrl?: string;
+  createdAt: string;
+  content: string;
+}
+
+export interface CourseChapter {
+  id: number;
+  title: string;
+  contentBlocks: ContentBlock[];
+}
+
+export interface Course {
+  id: number;
+  title: string;
+  instructorName: string;
+  lastUpdatedAt: string; // ISO Date String
+  language: string;
+  thumbnailUrl: string;
+  description: string;
+  chapters: CourseChapter[];
+  announcements?: Announcement[];
+  userNotes?: Note[];
+}
