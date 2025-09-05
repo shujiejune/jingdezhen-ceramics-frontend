@@ -75,9 +75,19 @@ export interface PortfolioWork {
   description?: string;
   isEditorsChoice: boolean;
   upvotesCount: number;
+  createdAt: string;
   updatedAt: string; // ISO 8601 string
   thumbnailUrl: string;
+  images?: PortfolioWorkImage[];
   tags: Tag[];
   upvotedByMe: boolean;
   savedByMe: boolean;
+}
+
+export interface PortfolioWorkImage {
+  id: number;
+  imageUrl: string;
+  isThumbnail: boolean;
+  caption: string;
+  displayOrder: number;
 }

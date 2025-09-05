@@ -41,6 +41,7 @@ const allMockWorks: PortfolioWork[] = Array.from({ length: 35 }, (_, i) => ({
   title: `Ceramic Vessel No. ${i + 1}`,
   isEditorsChoice: i < 7, // First 7 are editor's choices
   upvotesCount: Math.floor(Math.random() * 250),
+  createdAt: new Date(2025, 8, 5 - i).toISOString(),
   updatedAt: new Date(2025, 8, 5 - i).toISOString(),
   thumbnailUrl: `https://placehold.co/600x400/d1fae5/065f46?text=Work+${i + 1}`,
   tags: [
@@ -348,19 +349,14 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
     return new Date(isoString).toLocaleDateString("en-CA"); // YYYY-MM-DD
   };
 
-  const copyLink = () => {
+  const copyLink = async () => {
     const link = `https://your-domain.com/portfolio/works/${props.work.id}`;
-    // A fallback for navigator.clipboard.writeText which may not work in iframes
-    const textArea = document.createElement("textarea");
-    textArea.value = link;
-    document.body.appendChild(textArea);
-    textArea.select();
     try {
-      document.execCommand("copy");
+      await navigator.clipboard.writeText(link);
+      console.log("Link copied to clipboard!");
     } catch (err) {
-      console.error("Fallback: Oops, unable to copy", err);
+      console.error("Failed to copy link: ", err);
     }
-    document.body.removeChild(textArea);
   };
 
   return (
@@ -381,7 +377,7 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
             alt={props.work.creatorNickname}
           />
           <span>{props.work.creatorNickname}</span>
-          <span>·</span>
+          <span> · </span>
           <span>{formatDate(props.work.updatedAt)}</span>
         </div>
         <div class="mt-3 space-x-2">

@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio/index'
 import { Route as GalleryIndexRouteImport } from './routes/gallery/index'
 import { Route as ForumIndexRouteImport } from './routes/forum/index'
 import { Route as EngageIndexRouteImport } from './routes/engage/index'
 import { Route as CourseIndexRouteImport } from './routes/course/index'
 import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
+import { Route as PortfolioWorkIdRouteImport } from './routes/portfolio/$workId'
 import { Route as GalleryArtworkIdRouteImport } from './routes/gallery/$artworkId'
 import { Route as ForumNewRouteImport } from './routes/forum/new'
 import { Route as ForumPostIdRouteImport } from './routes/forum/$postId'
@@ -28,6 +30,11 @@ import { Route as CourseCourseIdChaptersChapterIdBlocksBlockIdRouteImport } from
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
+  id: '/portfolio/',
+  path: '/portfolio/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryIndexRoute = GalleryIndexRouteImport.update({
@@ -53,6 +60,11 @@ const CourseIndexRoute = CourseIndexRouteImport.update({
 const CeramicstoryIndexRoute = CeramicstoryIndexRouteImport.update({
   id: '/ceramicstory/',
   path: '/ceramicstory/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioWorkIdRoute = PortfolioWorkIdRouteImport.update({
+  id: '/portfolio/$workId',
+  path: '/portfolio/$workId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryArtworkIdRoute = GalleryArtworkIdRouteImport.update({
@@ -112,11 +124,13 @@ export interface FileRoutesByFullPath {
   '/forum/$postId': typeof ForumPostIdRoute
   '/forum/new': typeof ForumNewRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
+  '/portfolio/$workId': typeof PortfolioWorkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/course': typeof CourseIndexRoute
   '/engage': typeof EngageIndexRoute
   '/forum': typeof ForumIndexRoute
   '/gallery': typeof GalleryIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
   '/course/$courseId/chapters/$chapterId/blocks/$blockId': typeof CourseCourseIdChaptersChapterIdBlocksBlockIdRoute
 }
 export interface FileRoutesByTo {
@@ -129,11 +143,13 @@ export interface FileRoutesByTo {
   '/forum/$postId': typeof ForumPostIdRoute
   '/forum/new': typeof ForumNewRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
+  '/portfolio/$workId': typeof PortfolioWorkIdRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/course': typeof CourseIndexRoute
   '/engage': typeof EngageIndexRoute
   '/forum': typeof ForumIndexRoute
   '/gallery': typeof GalleryIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
   '/course/$courseId/chapters/$chapterId/blocks/$blockId': typeof CourseCourseIdChaptersChapterIdBlocksBlockIdRoute
 }
 export interface FileRoutesById {
@@ -147,11 +163,13 @@ export interface FileRoutesById {
   '/forum/$postId': typeof ForumPostIdRoute
   '/forum/new': typeof ForumNewRoute
   '/gallery/$artworkId': typeof GalleryArtworkIdRoute
+  '/portfolio/$workId': typeof PortfolioWorkIdRoute
   '/ceramicstory/': typeof CeramicstoryIndexRoute
   '/course/': typeof CourseIndexRoute
   '/engage/': typeof EngageIndexRoute
   '/forum/': typeof ForumIndexRoute
   '/gallery/': typeof GalleryIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
   '/course/$courseId/chapters/$chapterId/blocks/$blockId': typeof CourseCourseIdChaptersChapterIdBlocksBlockIdRoute
 }
 export interface FileRouteTypes {
@@ -166,11 +184,13 @@ export interface FileRouteTypes {
     | '/forum/$postId'
     | '/forum/new'
     | '/gallery/$artworkId'
+    | '/portfolio/$workId'
     | '/ceramicstory'
     | '/course'
     | '/engage'
     | '/forum'
     | '/gallery'
+    | '/portfolio'
     | '/course/$courseId/chapters/$chapterId/blocks/$blockId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -183,11 +203,13 @@ export interface FileRouteTypes {
     | '/forum/$postId'
     | '/forum/new'
     | '/gallery/$artworkId'
+    | '/portfolio/$workId'
     | '/ceramicstory'
     | '/course'
     | '/engage'
     | '/forum'
     | '/gallery'
+    | '/portfolio'
     | '/course/$courseId/chapters/$chapterId/blocks/$blockId'
   id:
     | '__root__'
@@ -200,11 +222,13 @@ export interface FileRouteTypes {
     | '/forum/$postId'
     | '/forum/new'
     | '/gallery/$artworkId'
+    | '/portfolio/$workId'
     | '/ceramicstory/'
     | '/course/'
     | '/engage/'
     | '/forum/'
     | '/gallery/'
+    | '/portfolio/'
     | '/course/$courseId/chapters/$chapterId/blocks/$blockId'
   fileRoutesById: FileRoutesById
 }
@@ -218,11 +242,13 @@ export interface RootRouteChildren {
   ForumPostIdRoute: typeof ForumPostIdRoute
   ForumNewRoute: typeof ForumNewRoute
   GalleryArtworkIdRoute: typeof GalleryArtworkIdRoute
+  PortfolioWorkIdRoute: typeof PortfolioWorkIdRoute
   CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
   CourseIndexRoute: typeof CourseIndexRoute
   EngageIndexRoute: typeof EngageIndexRoute
   ForumIndexRoute: typeof ForumIndexRoute
   GalleryIndexRoute: typeof GalleryIndexRoute
+  PortfolioIndexRoute: typeof PortfolioIndexRoute
 }
 
 declare module '@tanstack/solid-router' {
@@ -232,6 +258,13 @@ declare module '@tanstack/solid-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery/': {
@@ -267,6 +300,13 @@ declare module '@tanstack/solid-router' {
       path: '/ceramicstory'
       fullPath: '/ceramicstory'
       preLoaderRoute: typeof CeramicstoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/$workId': {
+      id: '/portfolio/$workId'
+      path: '/portfolio/$workId'
+      fullPath: '/portfolio/$workId'
+      preLoaderRoute: typeof PortfolioWorkIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery/$artworkId': {
@@ -358,11 +398,13 @@ const rootRouteChildren: RootRouteChildren = {
   ForumPostIdRoute: ForumPostIdRoute,
   ForumNewRoute: ForumNewRoute,
   GalleryArtworkIdRoute: GalleryArtworkIdRoute,
+  PortfolioWorkIdRoute: PortfolioWorkIdRoute,
   CeramicstoryIndexRoute: CeramicstoryIndexRoute,
   CourseIndexRoute: CourseIndexRoute,
   EngageIndexRoute: EngageIndexRoute,
   ForumIndexRoute: ForumIndexRoute,
   GalleryIndexRoute: GalleryIndexRoute,
+  PortfolioIndexRoute: PortfolioIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
