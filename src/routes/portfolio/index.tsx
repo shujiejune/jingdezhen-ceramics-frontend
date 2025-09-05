@@ -349,7 +349,11 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
     return new Date(isoString).toLocaleDateString("en-CA"); // YYYY-MM-DD
   };
 
-  const copyLink = async () => {
+  const copyLink = async (event: MouseEvent) => {
+    // Prevent the Link component from navigating
+    event.preventDefault();
+    event.stopPropagation();
+
     const link = `https://your-domain.com/portfolio/works/${props.work.id}`;
     try {
       await navigator.clipboard.writeText(link);
@@ -357,6 +361,14 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
     } catch (err) {
       console.error("Failed to copy link: ", err);
     }
+  };
+
+  const handleButtonClick = (event: MouseEvent) => {
+    // Prevent the Link component from navigating when any action button is clicked
+    event.preventDefault();
+    event.stopPropagation();
+    // Add logic for upvoting or saving here
+    console.log("Action button clicked");
   };
 
   return (
@@ -394,6 +406,7 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
         <div class="mt-auto pt-3 border-t border-gray-200">
           <div class="flex items-center justify-between text-gray-700">
             <button
+              onClick={handleButtonClick}
               class="flex items-center gap-1.5 hover:text-red-500"
               classList={{ "text-red-500": props.work.upvotedByMe }}
             >
@@ -404,6 +417,7 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
             </button>
             <div class="h-4 w-px bg-gray-200" /> {/* Vertical Separator */}
             <button
+              onClick={handleButtonClick}
               class="hover:text-blue-600"
               classList={{ "text-blue-600": props.work.savedByMe }}
             >
