@@ -65,3 +65,19 @@ export interface Course {
   announcements?: Announcement[];
   userNotes?: Note[];
 }
+
+export interface PortfolioWork {
+  id: number;
+  userId: string;
+  creatorNickname: string;
+  creatorAvatarUrl: string; // Added for the UI
+  title: string;
+  description?: string;
+  isEditorsChoice: boolean;
+  upvotesCount: number;
+  updatedAt: string; // ISO 8601 string
+  thumbnailUrl: string;
+  tags: Tag[];
+  upvotedByMe: boolean;
+  savedByMe: boolean;
+}

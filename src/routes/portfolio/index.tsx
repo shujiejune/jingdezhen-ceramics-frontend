@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense, createSignal, createEffect } from "solid-js";
 import type { Component } from "solid-js";
 import * as Select from "@kobalte/core/select";
+import * as Tooltip from "@kobalte/core/tooltip";
 import {
   CaretDown,
   Check,
@@ -11,38 +12,26 @@ import {
   CaretLeft,
   CaretRight,
   CaretLineUp,
+  Funnel,
+  ShareFat,
+  X,
+  Plus,
 } from "~/components/icons/Phosphor";
+import { PortfolioWork } from "~/lib/types";
 
-// --- Type Definitions (from Go backend struct) ---
-
-interface Tag {
-  id: number;
-  name: string;
-}
-
-interface PortfolioWork {
-  id: number;
-  userId: string;
-  creatorNickname: string;
-  creatorAvatarUrl: string; // Added for the UI
-  title: string;
-  description?: string;
-  isEditorsChoice: boolean;
-  upvotesCount: number;
-  createdAt: string; // ISO 8601 string
-  thumbnailUrl: string;
-  tags: Tag[];
-  upvotedByMe: boolean;
-  savedByMe: boolean;
-}
+// --- Type Definitions ---
 
 type SortOption =
-  | "createdAt:desc"
-  | "createdAt:asc"
+  | "updatedAt:desc"
+  | "updatedAt:asc"
   | "upvotesCount:desc"
   | "upvotesCount:asc";
 
 // --- Mock API Fetching ---
+
+const mockUser = {
+  isLoggedIn: true,
+};
 
 const allMockWorks: PortfolioWork[] = Array.from({ length: 35 }, (_, i) => ({
   id: i + 1,
@@ -52,7 +41,7 @@ const allMockWorks: PortfolioWork[] = Array.from({ length: 35 }, (_, i) => ({
   title: `Ceramic Vessel No. ${i + 1}`,
   isEditorsChoice: i < 7, // First 7 are editor's choices
   upvotesCount: Math.floor(Math.random() * 250),
-  createdAt: new Date(2025, 8, 5 - i).toISOString(),
+  updatedAt: new Date(2025, 8, 5 - i).toISOString(),
   thumbnailUrl: `https://placehold.co/600x400/d1fae5/065f46?text=Work+${i + 1}`,
   tags: [
     { id: 1, name: "Glazing" },
@@ -80,9 +69,9 @@ const fetchAllWorks = async (
 
   const sortedWorks = [...allMockWorks].sort((a, b) => {
     let valA, valB;
-    if (sortBy === "createdAt") {
-      valA = new Date(a.createdAt).getTime();
-      valB = new Date(b.createdAt).getTime();
+    if (sortBy === "updatedAt") {
+      valA = new Date(a.updatedAt).getTime();
+      valB = new Date(b.updatedAt).getTime();
     } else {
       valA = a.upvotesCount;
       valB = b.upvotesCount;
@@ -109,7 +98,8 @@ export const Route = createFileRoute("/portfolio/")({
 function PortfolioPage() {
   const [currentPage, setCurrentPage] = createSignal(1);
   const [sortOption, setSortOption] =
-    createSignal<SortOption>("createdAt:desc");
+    createSignal<SortOption>("updatedAt:desc");
+  const [tags, setTags] = createSignal<string[]>([]);
 
   const editorsChoiceQuery = useQuery(() => ({
     queryKey: ["portfolio-editors-choice"],
@@ -145,7 +135,20 @@ function PortfolioPage() {
       <section>
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold">All Works</h2>
-          <PortfolioFilter value={sortOption()} onChange={setSortOption} />
+          <TagFilter tags={tags()} setTags={setTags} />
+          <PortfolioFilter
+            value={sortOption()}
+            onChange={(newSort) => {
+              setCurrentPage(1);
+              setSortOption(newSort);
+            }}
+          />
+          <Show when={mockUser.isLoggedIn}>
+            <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+              <Plus />
+              Create
+            </button>
+          </Show>
         </div>
         <Suspense fallback={<WorkGridSkeleton />}>
           <Show when={allWorksQuery.data} keyed>
@@ -234,13 +237,61 @@ const EditorsChoiceCarousel: Component<{ works: PortfolioWork[] }> = (
   );
 };
 
+const TagFilter: Component<{
+  tags: string[];
+  setTags: (tags: string[]) => void;
+}> = (props) => {
+  const [inputValue, setInputValue] = createSignal("");
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter" && inputValue().trim()) {
+      const newTag = inputValue().trim();
+      if (!props.tags.includes(newTag)) {
+        props.setTags([...props.tags, newTag]);
+      }
+      setInputValue("");
+      event.preventDefault();
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    props.setTags(props.tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  return (
+    <div class="flex items-center gap-2 border rounded-md p-1 bg-white min-w-[300px]">
+      <Funnel class="text-gray-400 ml-1" />
+      <div class="flex-grow flex items-center flex-wrap gap-1">
+        <For each={props.tags}>
+          {(tag) => (
+            <span class="flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-sm">
+              {tag}
+              <button onClick={() => removeTag(tag)}>
+                <X size={12} />
+              </button>
+            </span>
+          )}
+        </For>
+        <input
+          type="text"
+          value={inputValue()}
+          onInput={(e) => setInputValue(e.currentTarget.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Filter by tags..."
+          class="flex-grow p-1 outline-none text-sm bg-transparent"
+        />
+      </div>
+    </div>
+  );
+};
+
 const PortfolioFilter: Component<{
   value: SortOption;
   onChange: (value: SortOption) => void;
 }> = (props) => {
   const options: { value: SortOption; label: string }[] = [
-    { value: "createdAt:desc", label: "Newest" },
-    { value: "createdAt:asc", label: "Oldest" },
+    { value: "updatedAt:desc", label: "Newest" },
+    { value: "updatedAt:asc", label: "Oldest" },
     { value: "upvotesCount:desc", label: "Most Upvoted" },
     { value: "upvotesCount:asc", label: "Least Upvoted" },
   ];
@@ -297,6 +348,21 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
     return new Date(isoString).toLocaleDateString("en-CA"); // YYYY-MM-DD
   };
 
+  const copyLink = () => {
+    const link = `https://your-domain.com/portfolio/works/${props.work.id}`;
+    // A fallback for navigator.clipboard.writeText which may not work in iframes
+    const textArea = document.createElement("textarea");
+    textArea.value = link;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand("copy");
+    } catch (err) {
+      console.error("Fallback: Oops, unable to copy", err);
+    }
+    document.body.removeChild(textArea);
+  };
+
   return (
     <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm flex flex-col h-full">
       <img
@@ -316,7 +382,7 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
           />
           <span>{props.work.creatorNickname}</span>
           <span>·</span>
-          <span>{formatDate(props.work.createdAt)}</span>
+          <span>{formatDate(props.work.updatedAt)}</span>
         </div>
         <div class="mt-3 space-x-2">
           <For each={props.work.tags.slice(0, 2)}>
@@ -349,6 +415,22 @@ const WorkCard: Component<{ work: PortfolioWork }> = (props) => {
                 fill={props.work.savedByMe ? "currentColor" : "none"}
               />
             </button>
+            <div class="ml-auto">
+              <Tooltip.Root>
+                <Tooltip.Trigger
+                  as="button"
+                  class="hover:text-green-600"
+                  onClick={copyLink}
+                >
+                  <ShareFat />
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content class="tooltip-content">
+                    Link Copied!
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </div>
           </div>
         </div>
       </div>
