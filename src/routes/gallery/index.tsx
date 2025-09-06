@@ -160,22 +160,11 @@ const ArtworkCarousel: Component<{ category: string }> = (props) => {
 };
 
 const ArtworkCard: Component<{ artwork: Artwork }> = (props) => {
-  const handleActionClick = (e: MouseEvent) => {
+  const handleFavoriteClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     // In a real app, trigger a mutation to update favorite status
-    console.log("Action button clicked, navigation prevented.");
-  };
-
-  const copyLink = async (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const link = `${window.location.origin}/gallery/artworks/${props.artwork.id}`;
-    try {
-      await navigator.clipboard.writeText(link);
-    } catch (err) {
-      console.error("Failed to copy link:", err);
-    }
+    console.log(`Toggling favorite for artwork ${props.artwork.id}`);
   };
 
   return (
@@ -191,40 +180,25 @@ const ArtworkCard: Component<{ artwork: Artwork }> = (props) => {
             alt={props.artwork.title}
             class="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          <Show when={mockUser.isLoggedIn}>
+            <button
+              onClick={handleFavoriteClick}
+              class="absolute bottom-2 right-2 w-9 h-9 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-md hover:bg-white z-10"
+              classList={{ "text-red-500": props.artwork.isFavorite }}
+              aria-label="Favorite"
+            >
+              <Heart
+                fill={props.artwork.isFavorite ? "currentColor" : "none"}
+              />
+              <span class="text-sm">{props.artwork.favoriteCount}</span>
+            </button>
+          </Show>
         </div>
         <div class="p-4">
           <h3 class="font-bold text-md truncate" title={props.artwork.title}>
             {props.artwork.title}
           </h3>
           <p class="text-sm text-gray-500">{props.artwork.period}</p>
-          <div class="flex justify-between items-center mt-3 pt-3 border-t">
-            <Show when={mockUser.isLoggedIn}>
-              <button
-                onClick={handleActionClick}
-                class="flex items-center gap-1.5 text-gray-600 hover:text-red-500 z-10"
-                classList={{ "text-red-500": props.artwork.isFavorite }}
-              >
-                <Heart
-                  fill={props.artwork.isFavorite ? "currentColor" : "none"}
-                />
-                <span class="text-sm">{props.artwork.favoriteCount}</span>
-              </button>
-            </Show>
-            <Tooltip.Root>
-              <Tooltip.Trigger
-                as="button"
-                class="text-gray-600 hover:text-blue-500 z-10"
-                onClick={copyLink}
-              >
-                <ShareFat />
-              </Tooltip.Trigger>
-              <Tooltip.Portal>
-                <Tooltip.Content class="tooltip-content">
-                  Link copied!
-                </Tooltip.Content>
-              </Tooltip.Portal>
-            </Tooltip.Root>
-          </div>
         </div>
       </div>
     </Link>
