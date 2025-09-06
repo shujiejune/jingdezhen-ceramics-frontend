@@ -91,3 +91,44 @@ export interface PortfolioWorkImage {
   caption: string;
   displayOrder: number;
 }
+
+/** Represents an artist, who can be a platform user or a historical figure. */
+export interface Artist {
+  id: number;
+  name: string;
+  bio?: string;
+  userId?: string; // Link to a platform user account
+  createdAt: string;
+  updatedAt?: string;
+}
+
+/** Represents a single image associated with an artwork. */
+export interface ArtworkImage {
+  id: number;
+  artworkId: number;
+  imageUrl: string;
+  isPrimary: boolean;
+  caption?: string;
+  displayOrder: number;
+}
+
+/** Represents a piece of ceramic art in the gallery. */
+export interface Artwork {
+  id: number;
+  title: string;
+  artistId?: number;
+  artistName?: string;
+  artistNameOverride?: string;
+  thumbnailUrl: string;
+  description?: string;
+  period: string;
+  dimensions?: string;
+  category: string;
+  isFavorite?: boolean; // User-specific
+  favoriteCount: number;
+  noteCount: number;
+  images?: ArtworkImage[];
+  tags?: Tag[];
+  createdAt: string;
+  updatedAt?: string;
+}
