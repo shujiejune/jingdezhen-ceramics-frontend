@@ -2,14 +2,8 @@ import { createFileRoute, Link } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense, createSignal, createEffect } from "solid-js";
 import type { Component, JSX } from "solid-js";
-import * as Tooltip from "@kobalte/core/tooltip";
 import { Artwork } from "~/lib/types";
-import {
-  CaretLeft,
-  CaretRight,
-  Heart,
-  ShareFat,
-} from "~/components/icons/Phosphor";
+import { CaretLeft, CaretRight, Heart } from "~/components/icons/Phosphor";
 
 // --- Mock User Data ---
 // In a real app, this would come from an auth context.
@@ -169,7 +163,7 @@ const ArtworkCard: Component<{ artwork: Artwork }> = (props) => {
 
   return (
     <Link
-      to="/gallery/$artworkId"
+      to="/gallery/artworks/$artworkId"
       params={{ artworkId: props.artwork.id.toString() }}
       class="flex-shrink-0 w-52 md:w-64 snap-start group"
     >
