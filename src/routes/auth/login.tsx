@@ -4,13 +4,6 @@ import { FormField, SocialLogins, MessageCard, AuthLayout } from "./_layout";
 
 export const Route = createFileRoute("/auth/login")({
   component: LoginPage,
-  // Use the layout
-  getParentRoute: () => Route.parentRoute,
-});
-
-// We need to define the parent route to use the layout
-Route.parentRoute = createFileRoute("/auth/_layout")({
-  component: AuthLayout,
 });
 
 function LoginPage() {

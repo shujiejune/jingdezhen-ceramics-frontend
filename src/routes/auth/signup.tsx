@@ -4,11 +4,6 @@ import { FormField, SocialLogins, MessageCard, AuthLayout } from "./_layout";
 
 export const Route = createFileRoute("/auth/signup")({
   component: SignupPage,
-  getParentRoute: () => Route.parentRoute,
-});
-
-Route.parentRoute = createFileRoute("/auth/_layout")({
-  component: AuthLayout,
 });
 
 function SignupPage() {

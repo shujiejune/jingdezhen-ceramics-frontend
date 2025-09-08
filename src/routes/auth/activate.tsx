@@ -2,7 +2,7 @@ import { createFileRoute, Link, useSearch } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
 import { Show } from "solid-js";
 import { z } from "zod";
-import { MessageCard, AuthLayout } from "./_layout";
+import { MessageCard } from "./_layout";
 
 const activateSearchSchema = z.object({
   token: z.string().optional(),
@@ -27,15 +27,10 @@ const activateAccount = async (token: string | undefined) => {
 export const Route = createFileRoute("/auth/activate")({
   validateSearch: (search) => activateSearchSchema.parse(search),
   component: AccountActivationPage,
-  getParentRoute: () => Route.parentRoute,
-});
-
-Route.parentRoute = createFileRoute("/auth/_layout")({
-  component: AuthLayout,
 });
 
 function AccountActivationPage() {
-  const search = useSearch();
+  const search = Route.useSearch();
   const activationQuery = useQuery(() => ({
     queryKey: ["activation", search().token],
     queryFn: () => activateAccount(search().token),
@@ -58,11 +53,11 @@ function AccountActivationPage() {
         {(data) => (
           <>
             <MessageCard
-              type={data.success ? "success" : "error"}
+              type={data().success ? "success" : "error"}
               title={
-                data.success ? "Activation Successful!" : "Activation Failed"
+                data().success ? "Activation Successful!" : "Activation Failed"
               }
-              message={data.message}
+              message={data().message}
             />
             <div class="mt-6">
               <Link

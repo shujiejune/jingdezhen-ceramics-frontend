@@ -1,6 +1,10 @@
-import { Outlet } from "@tanstack/solid-router";
-import { For, Show, type Component, type JSX } from "solid-js";
+import { createFileRoute, Outlet } from "@tanstack/solid-router";
+import { Show, type Component, type JSX } from "solid-js";
 import { GoogleLogo, WechatLogo } from "~/components/icons/Phosphor";
+
+export const Route = createFileRoute("/auth/_layout")({
+  component: AuthLayout,
+});
 
 // This is the main layout for all /auth/* routes.
 // The <Outlet /> component will render the specific child route (login, signup, etc.)
@@ -39,13 +43,13 @@ export const SocialLogins: Component<{ verb?: string }> = (props) => {
       <div class="mt-6 grid grid-cols-2 gap-3">
         <div>
           <button class="social-btn">
-            <GoogleLogo weight="bold" class="h-5 w-5" />
+            <GoogleLogo class="h-5 w-5" />
             <span>Google</span>
           </button>
         </div>
         <div>
           <button class="social-btn">
-            <WechatLogo weight="bold" class="h-5 w-5" />
+            <WechatLogo class="h-5 w-5" />
             <span>WeChat</span>
           </button>
         </div>

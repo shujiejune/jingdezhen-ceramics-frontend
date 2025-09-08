@@ -10,15 +10,10 @@ const resetSearchSchema = z.object({
 export const Route = createFileRoute("/auth/reset-password")({
   validateSearch: (search) => resetSearchSchema.parse(search),
   component: ResetPasswordPage,
-  getParentRoute: () => Route.parentRoute,
-});
-
-Route.parentRoute = createFileRoute("/auth/_layout")({
-  component: AuthLayout,
 });
 
 function ResetPasswordPage() {
-  const search = useSearch();
+  const search = Route.useSearch();
   const [password, setPassword] = createSignal("");
   const [confirmPassword, setConfirmPassword] = createSignal("");
   const [isLoading, setIsLoading] = createSignal(false);

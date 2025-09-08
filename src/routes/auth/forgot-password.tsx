@@ -4,11 +4,6 @@ import { FormField, MessageCard, AuthLayout } from "./_layout";
 
 export const Route = createFileRoute("/auth/forgot-password")({
   component: ForgotPasswordPage,
-  getParentRoute: () => Route.parentRoute,
-});
-
-Route.parentRoute = createFileRoute("/auth/_layout")({
-  component: AuthLayout,
 });
 
 function ForgotPasswordPage() {
