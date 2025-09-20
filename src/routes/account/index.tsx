@@ -1,22 +1,46 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/solid-router";
+import { createFileRoute, Link, redirect } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
-import { For, Show, Suspense, createSignal, type Component } from "solid-js";
+import {
+  For,
+  Show,
+  Suspense,
+  createSignal,
+  type Component,
+  type JSX,
+} from "solid-js";
 import { z } from "zod";
-import { AccountSidebar } from "~/components/layout/AccountSidebar";
-import { MagnifyingGlass } from "~/components/icons/Phosphor";
+import {
+  AccountSidebar,
+  type TabItem,
+} from "~/components/layout/AccountSidebar";
+import {
+  Bell,
+  BookOpen,
+  Notebook,
+  Palette,
+  Swap,
+  Heart,
+  BookmarkSimple,
+  MagnifyingGlass,
+} from "~/components/icons/Phosphor";
 import {
   Notification,
   EnrolledCourse,
   Note,
-  PortfolioWork,
-  Artwork,
-  ForumPost,
+  UserWork,
+  UserFavorite,
+  UserPost,
 } from "~/lib/types";
 
-// --- Mock User Data ---
-const mockUser = {
+// --- Mock Auth & User Data ---
+const getLoggedInUser = () => ({
+  id: "user-abc",
   nickname: "CeramicMaster",
   avatarUrl: "https://placehold.co/100x100/d1fae5/065f46?text=CM",
+});
+const auth = {
+  // Set this to `false` in your testing to see the redirect to /login in action.
+  isAuthenticated: true,
 };
 
 // --- Mock Data & API Fetching ---
@@ -101,7 +125,7 @@ const fetchMyNotes = async (): Promise<Note[]> => {
     },
   ];
 };
-const fetchMyWorks = async (): Promise<PortfolioWork[]> => {
+const fetchMyWorks = async (): Promise<UserWork[]> => {
   await new Promise((r) => setTimeout(r, 300));
   return [
     {
@@ -118,7 +142,7 @@ const fetchMyWorks = async (): Promise<PortfolioWork[]> => {
     },
   ];
 };
-const fetchMyPosts = async (): Promise<ForumPost[]> => {
+const fetchMyPosts = async (): Promise<UserPost[]> => {
   await new Promise((r) => setTimeout(r, 300));
   return [
     {
@@ -139,7 +163,7 @@ const fetchMyPosts = async (): Promise<ForumPost[]> => {
     },
   ];
 };
-const fetchMyFavorites = async (): Promise<Artwork[]> => {
+const fetchMyFavorites = async (): Promise<UserFavorite[]> => {
   await new Promise((r) => setTimeout(r, 300));
   return [
     {
@@ -158,7 +182,7 @@ const fetchMyFavorites = async (): Promise<Artwork[]> => {
     },
   ];
 };
-const fetchMySaves = async (): Promise<ForumPost[]> => {
+const fetchMySaves = async (): Promise<UserPost[]> => {
   return fetchMyPosts(); // For demo, assume saved posts are same as user's posts
 };
 
@@ -182,21 +206,51 @@ const accountSearchSchema = z.object({
     .catch("notifications"),
 });
 
+export type AccountTab = z.infer<typeof accountSearchSchema>["tab"];
+
 export const Route = createFileRoute("/account/")({
+  // This is a protected route. If the user is not authenticated,
+  // they will be redirected to the login page before this component loads.
+  beforeLoad: async ({ location }) => {
+    if (!auth.isAuthenticated) {
+      throw redirect({
+        to: "/auth/login",
+        search: {
+          // Pass the current page as a redirect param so the user can be returned here after login
+          redirect: location.pathname,
+        },
+      });
+    }
+  },
   validateSearch: (search) => accountSearchSchema.parse(search),
+  loader: ({ location }) => {
+    const validatedSearchParams = accountSearchSchema.parse(location.search);
+    return { searchParams: validatedSearchParams };
+  },
   component: AccountPage,
 });
 
 // --- Main Page Component ---
 
 function AccountPage() {
-  const search = Route.useSearch();
-  const activeTab = () => search().tab;
+  const loaderData = Route.useLoaderData();
+  const activeTab = () => loaderData().searchParams.tab;
+  const user = getLoggedInUser();
+
+  const tabs: TabItem<AccountTab>[] = [
+    { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "enrolled-courses", label: "Enrolled Courses", icon: BookOpen },
+    { id: "my-notes", label: "My Notes", icon: Notebook },
+    { id: "my-works", label: "My Works", icon: Palette },
+    { id: "my-posts", label: "My Posts", icon: Swap },
+    { id: "my-favorites", label: "My Favorites", icon: Heart },
+    { id: "my-saves", label: "My Saves", icon: BookmarkSimple },
+  ];
 
   return (
     <div class="container mx-auto px-4 py-8">
       <div class="flex flex-col md:flex-row gap-8">
-        <AccountSidebar activeTab={activeTab()} />
+        <AccountSidebar user={user} tabs={tabs} activeTab={activeTab()} />
         <main class="flex-grow">
           <Suspense
             fallback={
@@ -240,18 +294,54 @@ const PanelHeader: Component<{ title: string; children?: any }> = (props) => (
   </div>
 );
 
-const getEntityLink = (type: string | undefined, id: number | undefined) => {
-  if (!type || !id) return "/";
-  switch (type) {
-    case "post":
-      return `/forum/${id}`;
-    case "artwork":
-      return `/gallery/artworks/${id}`;
-    case "course":
-      return `/course/${id}`;
-    default:
-      return "/";
+const EntityLink: Component<{
+  type?: "post" | "artwork" | "course" | "course_chapter";
+  id?: number;
+  parentId?: number;
+  class?: string;
+  children: JSX.Element;
+}> = (props) => {
+  const commonProps = { class: props.class, target: "_blank" };
+
+  if (props.type === "post" && props.id) {
+    return (
+      <Link
+        to="/forum/posts/$postId"
+        params={{ postId: props.id.toString() }}
+        {...commonProps}
+      >
+        {props.children}
+      </Link>
+    );
   }
+  if (props.type === "artwork" && props.id) {
+    return (
+      <Link
+        to="/gallery/artworks/$artworkId"
+        params={{ artworkId: props.id.toString() }}
+        {...commonProps}
+      >
+        {props.children}
+      </Link>
+    );
+  }
+  if (
+    (props.type === "course" || props.type === "course_chapter") &&
+    props.id
+  ) {
+    const courseId = props.parentId ?? props.id;
+    return (
+      <Link
+        to="/course/$courseId"
+        params={{ courseId: courseId.toString() }}
+        {...commonProps}
+      >
+        {props.children}
+      </Link>
+    );
+  }
+  // Fallback for missing data
+  return <span class={props.class}>{props.children}</span>;
 };
 
 const NotificationsPanel: Component = () => {
@@ -283,7 +373,10 @@ const NotificationsPanel: Component = () => {
                       <span>
                         <Show when={notification.actorUser}>
                           <Link
-                            to={`/account/${notification.actorUser!.id}`}
+                            to={"/account/$userId"}
+                            params={{ userId: notification.actorUser!.id }}
+                            search={{ tab: "notifications" }}
+                            target="_blank"
                             class="font-semibold text-gray-800 hover:underline"
                           >
                             {notification.actorUser!.nickname}
@@ -291,15 +384,13 @@ const NotificationsPanel: Component = () => {
                         </Show>{" "}
                         {notification.message}{" "}
                         <Show when={notification.entityTitle}>
-                          <Link
-                            to={getEntityLink(
-                              notification.entityType,
-                              notification.entityId,
-                            )}
+                          <EntityLink
+                            type={notification.entityType}
+                            id={notification.entityId}
                             class="font-semibold text-blue-600 hover:underline"
                           >
                             '{notification.entityTitle}'
-                          </Link>
+                          </EntityLink>
                         </Show>
                       </span>
                     </div>
@@ -363,9 +454,10 @@ const MyNotesPanel: Component = () => {
   const [searchTerm, setSearchTerm] = createSignal("");
 
   const createExcerpt = (content: string, length = 100) => {
-    return content.length > length
-      ? content.substring(0, length) + "..."
-      : content;
+    const strippedContent = content.replace(/<[^>]+>|#+\s/g, ""); // Remove HTML/Markdown headers
+    return strippedContent.length > length
+      ? strippedContent.substring(0, length) + "..."
+      : strippedContent;
   };
 
   const filteredNotes = () => {
@@ -400,15 +492,17 @@ const MyNotesPanel: Component = () => {
               <h3 class="font-semibold">{note.title}</h3>
               <p class="text-sm text-gray-600 mt-1 italic">
                 on{" "}
-                <Link
-                  to={`/gallery/artworks/${note.entityId}`}
+                <EntityLink
+                  type={note.entityType}
+                  id={note.entityId}
+                  parentId={note.parentEntityId}
                   class="text-blue-600 hover:underline"
                 >
                   {note.entityTitle}
-                </Link>
+                </EntityLink>
               </p>
               <p class="text-sm text-gray-500 mt-2 line-clamp-2">
-                {note.content}
+                {createExcerpt(note.content)}
               </p>
             </div>
           )}
@@ -420,7 +514,7 @@ const MyNotesPanel: Component = () => {
 
 const MyWorksPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-works"],
+    queryKey: ["account-works"],
     queryFn: fetchMyWorks,
   }));
   return (
@@ -430,7 +524,8 @@ const MyWorksPanel: Component = () => {
         <For each={query.data}>
           {(work) => (
             <Link
-              to={`/portfolio/works/${work.id}`}
+              to={"/portfolio/works/$workId"}
+              params={{ workId: work.id.toString() }}
               class="border rounded-lg bg-white overflow-hidden shadow-sm group"
             >
               <img
@@ -441,8 +536,7 @@ const MyWorksPanel: Component = () => {
               <div class="p-4 flex justify-between items-center">
                 <h3 class="font-semibold truncate">{work.title}</h3>
                 <div class="flex items-center gap-1 text-sm text-gray-500">
-                  <Heart weight="fill" class="text-red-400" />{" "}
-                  {work.upvotesCount}
+                  <Heart fill="red" class="text-red-400" /> {work.upvotesCount}
                 </div>
               </div>
             </Link>
@@ -455,7 +549,7 @@ const MyWorksPanel: Component = () => {
 
 const MyPostsPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-posts"],
+    queryKey: ["account-posts"],
     queryFn: fetchMyPosts,
   }));
   return (
@@ -476,15 +570,16 @@ const MyPostsPanel: Component = () => {
                 <tr class="border-b hover:bg-gray-50">
                   <td class="px-6 py-4">
                     <Link
-                      to={`/forum/${post.id}`}
+                      to={"/forum/posts/$postId"}
+                      params={{ postId: post.id.toString() }}
                       class="font-semibold text-blue-600 hover:underline"
                     >
                       {post.title}
                     </Link>
-                    <p class="text-xs text-gray-500">{post.forumCategory}</p>
+                    <p class="text-xs text-gray-500">{post.categoryName}</p>
                   </td>
                   <td class="px-6 py-4 text-gray-600">
-                    {post.commentCount} comments / {post.upvotesCount} upvotes
+                    {post.commentCount} comments / {post.likeCount} upvotes
                   </td>
                   <td class="px-6 py-4 text-gray-500">
                     {new Date(post.createdAt).toLocaleDateString()}
@@ -501,7 +596,7 @@ const MyPostsPanel: Component = () => {
 
 const MyFavoritesPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-favorites"],
+    queryKey: ["account-favorites"],
     queryFn: fetchMyFavorites,
   }));
   return (
@@ -511,7 +606,8 @@ const MyFavoritesPanel: Component = () => {
         <For each={query.data}>
           {(fav) => (
             <Link
-              to={`/gallery/artworks/${fav.id}`}
+              to={"/gallery/artworks/$artworkId"}
+              params={{ artworkId: fav.id.toString() }}
               class="border rounded-lg bg-white overflow-hidden shadow-sm group"
             >
               <img
@@ -533,7 +629,7 @@ const MyFavoritesPanel: Component = () => {
 
 const MySavesPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-saves"],
+    queryKey: ["account-saves"],
     queryFn: fetchMySaves,
   }));
   return (
@@ -555,15 +651,16 @@ const MySavesPanel: Component = () => {
                 <tr class="border-b hover:bg-gray-50">
                   <td class="px-6 py-4">
                     <Link
-                      to={`/forum/${post.id}`}
+                      to={"/forum/posts/$postId"}
+                      params={{ postId: post.id.toString() }}
                       class="font-semibold text-blue-600 hover:underline"
                     >
                       {post.title}
                     </Link>
-                    <p class="text-xs text-gray-500">{post.forumCategory}</p>
+                    <p class="text-xs text-gray-500">{post.categoryName}</p>
                   </td>
                   <td class="px-6 py-4 text-gray-600">
-                    {post.commentCount} comments / {post.upvotesCount} upvotes
+                    {post.commentCount} comments / {post.likeCount} upvotes
                   </td>
                   <td class="px-6 py-4 text-gray-500">
                     {new Date(post.createdAt).toLocaleDateString()}

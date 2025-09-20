@@ -1,39 +1,38 @@
 import { Link } from "@tanstack/solid-router";
 import { For, type Component } from "solid-js";
-import {
-  Bell,
-  BookOpen,
-  Notebook,
-  Palette,
-  Swap,
-  Heart,
-  BookmarkSimple,
-} from "~/components/icons/Phosphor";
+import type { Icon } from "phosphor-solid";
+import type { AccountTab } from "~/routes/account";
 
-export const AccountSidebar: Component<{ activeTab: string }> = (props) => {
-  const tabs = [
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "enrolled-courses", label: "Enrolled Courses", icon: BookOpen },
-    { id: "my-notes", label: "My Notes", icon: Notebook },
-    { id: "my-works", label: "My Works", icon: Palette },
-    { id: "my-posts", label: "My Posts", icon: Swap },
-    { id: "my-favorites", label: "My Favorites", icon: Heart },
-    { id: "my-saves", label: "My Saves", icon: BookmarkSimple },
-  ];
+// Define a generic type for the tab items that the parent will provide
+export interface TabItem<T extends string> {
+  id: T;
+  label: string;
+  icon: Icon;
+}
 
+interface AccountSidebarProps {
+  user: {
+    nickname: string;
+    avatarUrl: string;
+  };
+  tabs: TabItem<AccountTab>[];
+  activeTab: AccountTab;
+}
+
+export const AccountSidebar: Component<AccountSidebarProps> = (props) => {
   return (
     <aside class="md:w-64 flex-shrink-0">
       <div class="flex flex-col items-center p-4 border rounded-lg bg-white">
         <img
-          src={mockUser.avatarUrl}
+          src={props.user.avatarUrl}
           alt="User Avatar"
           class="w-24 h-24 rounded-full"
         />
-        <h2 class="mt-3 text-xl font-semibold">{mockUser.nickname}</h2>
+        <h2 class="mt-3 text-xl font-semibold">{props.user.nickname}</h2>
       </div>
       <nav class="mt-6">
         <ul class="space-y-1">
-          <For each={tabs}>
+          <For each={props.tabs}>
             {(tab) => {
               const Icon = tab.icon;
               const isActive = () => props.activeTab === tab.id;

@@ -80,7 +80,7 @@ The process was challenging but ultimately rewarding, pushing the boundaries of 
 };
 
 // --- Route Definition ---
-export const Route = createFileRoute("/portfolio/$workId")({
+export const Route = createFileRoute("/portfolio/works/$workId")({
   component: SingleWorkPage,
 });
 

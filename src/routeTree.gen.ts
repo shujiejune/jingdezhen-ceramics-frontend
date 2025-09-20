@@ -18,9 +18,8 @@ import { Route as ForumIndexRouteImport } from './routes/forum/index'
 import { Route as EngageIndexRouteImport } from './routes/engage/index'
 import { Route as CourseIndexRouteImport } from './routes/course/index'
 import { Route as CeramicstoryIndexRouteImport } from './routes/ceramicstory/index'
-import { Route as PortfolioWorkIdRouteImport } from './routes/portfolio/$workId'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as ForumNewRouteImport } from './routes/forum/new'
-import { Route as ForumPostIdRouteImport } from './routes/forum/$postId'
 import { Route as EngageSlugRouteImport } from './routes/engage/$slug'
 import { Route as CourseCourseIdRouteImport } from './routes/course/$courseId'
 import { Route as CeramicstorySlugRouteImport } from './routes/ceramicstory/$slug'
@@ -30,7 +29,10 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthActivateRouteImport } from './routes/auth/activate'
 import { Route as AuthLayoutRouteImport } from './routes/auth/_layout'
+import { Route as AccountUserIdRouteImport } from './routes/account/$userId'
+import { Route as PortfolioWorksWorkIdRouteImport } from './routes/portfolio/works/$workId'
 import { Route as GalleryArtworksArtworkIdRouteImport } from './routes/gallery/artworks/$artworkId'
+import { Route as ForumPostsPostIdRouteImport } from './routes/forum/posts/$postId'
 import { Route as CourseCourseIdChaptersChapterIdBlocksBlockIdRouteImport } from './routes/course/$courseId/chapters/$chapterId/blocks/$blockId'
 
 const AuthRouteImport = createFileRoute('/auth')()
@@ -75,19 +77,14 @@ const CeramicstoryIndexRoute = CeramicstoryIndexRouteImport.update({
   path: '/ceramicstory/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PortfolioWorkIdRoute = PortfolioWorkIdRouteImport.update({
-  id: '/portfolio/$workId',
-  path: '/portfolio/$workId',
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForumNewRoute = ForumNewRouteImport.update({
   id: '/forum/new',
   path: '/forum/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForumPostIdRoute = ForumPostIdRouteImport.update({
-  id: '/forum/$postId',
-  path: '/forum/$postId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EngageSlugRoute = EngageSlugRouteImport.update({
@@ -134,12 +131,27 @@ const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => AuthRoute,
 } as any)
+const AccountUserIdRoute = AccountUserIdRouteImport.update({
+  id: '/account/$userId',
+  path: '/account/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioWorksWorkIdRoute = PortfolioWorksWorkIdRouteImport.update({
+  id: '/portfolio/works/$workId',
+  path: '/portfolio/works/$workId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryArtworksArtworkIdRoute =
   GalleryArtworksArtworkIdRouteImport.update({
     id: '/gallery/artworks/$artworkId',
     path: '/gallery/artworks/$artworkId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ForumPostsPostIdRoute = ForumPostsPostIdRouteImport.update({
+  id: '/forum/posts/$postId',
+  path: '/forum/posts/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CourseCourseIdChaptersChapterIdBlocksBlockIdRoute =
   CourseCourseIdChaptersChapterIdBlocksBlockIdRouteImport.update({
     id: '/chapters/$chapterId/blocks/$blockId',
@@ -149,6 +161,7 @@ const CourseCourseIdChaptersChapterIdBlocksBlockIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account/$userId': typeof AccountUserIdRoute
   '/auth': typeof AuthLayoutRoute
   '/auth/activate': typeof AuthActivateRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -158,20 +171,22 @@ export interface FileRoutesByFullPath {
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/course/$courseId': typeof CourseCourseIdRouteWithChildren
   '/engage/$slug': typeof EngageSlugRoute
-  '/forum/$postId': typeof ForumPostIdRoute
   '/forum/new': typeof ForumNewRoute
-  '/portfolio/$workId': typeof PortfolioWorkIdRoute
+  '/account': typeof AccountIndexRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/course': typeof CourseIndexRoute
   '/engage': typeof EngageIndexRoute
   '/forum': typeof ForumIndexRoute
   '/gallery': typeof GalleryIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
+  '/forum/posts/$postId': typeof ForumPostsPostIdRoute
   '/gallery/artworks/$artworkId': typeof GalleryArtworksArtworkIdRoute
+  '/portfolio/works/$workId': typeof PortfolioWorksWorkIdRoute
   '/course/$courseId/chapters/$chapterId/blocks/$blockId': typeof CourseCourseIdChaptersChapterIdBlocksBlockIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account/$userId': typeof AccountUserIdRoute
   '/auth': typeof AuthLayoutRoute
   '/auth/activate': typeof AuthActivateRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -181,21 +196,23 @@ export interface FileRoutesByTo {
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/course/$courseId': typeof CourseCourseIdRouteWithChildren
   '/engage/$slug': typeof EngageSlugRoute
-  '/forum/$postId': typeof ForumPostIdRoute
   '/forum/new': typeof ForumNewRoute
-  '/portfolio/$workId': typeof PortfolioWorkIdRoute
+  '/account': typeof AccountIndexRoute
   '/ceramicstory': typeof CeramicstoryIndexRoute
   '/course': typeof CourseIndexRoute
   '/engage': typeof EngageIndexRoute
   '/forum': typeof ForumIndexRoute
   '/gallery': typeof GalleryIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
+  '/forum/posts/$postId': typeof ForumPostsPostIdRoute
   '/gallery/artworks/$artworkId': typeof GalleryArtworksArtworkIdRoute
+  '/portfolio/works/$workId': typeof PortfolioWorksWorkIdRoute
   '/course/$courseId/chapters/$chapterId/blocks/$blockId': typeof CourseCourseIdChaptersChapterIdBlocksBlockIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account/$userId': typeof AccountUserIdRoute
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRoute
   '/auth/activate': typeof AuthActivateRoute
@@ -206,22 +223,24 @@ export interface FileRoutesById {
   '/ceramicstory/$slug': typeof CeramicstorySlugRoute
   '/course/$courseId': typeof CourseCourseIdRouteWithChildren
   '/engage/$slug': typeof EngageSlugRoute
-  '/forum/$postId': typeof ForumPostIdRoute
   '/forum/new': typeof ForumNewRoute
-  '/portfolio/$workId': typeof PortfolioWorkIdRoute
+  '/account/': typeof AccountIndexRoute
   '/ceramicstory/': typeof CeramicstoryIndexRoute
   '/course/': typeof CourseIndexRoute
   '/engage/': typeof EngageIndexRoute
   '/forum/': typeof ForumIndexRoute
   '/gallery/': typeof GalleryIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/forum/posts/$postId': typeof ForumPostsPostIdRoute
   '/gallery/artworks/$artworkId': typeof GalleryArtworksArtworkIdRoute
+  '/portfolio/works/$workId': typeof PortfolioWorksWorkIdRoute
   '/course/$courseId/chapters/$chapterId/blocks/$blockId': typeof CourseCourseIdChaptersChapterIdBlocksBlockIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account/$userId'
     | '/auth'
     | '/auth/activate'
     | '/auth/forgot-password'
@@ -231,20 +250,22 @@ export interface FileRouteTypes {
     | '/ceramicstory/$slug'
     | '/course/$courseId'
     | '/engage/$slug'
-    | '/forum/$postId'
     | '/forum/new'
-    | '/portfolio/$workId'
+    | '/account'
     | '/ceramicstory'
     | '/course'
     | '/engage'
     | '/forum'
     | '/gallery'
     | '/portfolio'
+    | '/forum/posts/$postId'
     | '/gallery/artworks/$artworkId'
+    | '/portfolio/works/$workId'
     | '/course/$courseId/chapters/$chapterId/blocks/$blockId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account/$userId'
     | '/auth'
     | '/auth/activate'
     | '/auth/forgot-password'
@@ -254,20 +275,22 @@ export interface FileRouteTypes {
     | '/ceramicstory/$slug'
     | '/course/$courseId'
     | '/engage/$slug'
-    | '/forum/$postId'
     | '/forum/new'
-    | '/portfolio/$workId'
+    | '/account'
     | '/ceramicstory'
     | '/course'
     | '/engage'
     | '/forum'
     | '/gallery'
     | '/portfolio'
+    | '/forum/posts/$postId'
     | '/gallery/artworks/$artworkId'
+    | '/portfolio/works/$workId'
     | '/course/$courseId/chapters/$chapterId/blocks/$blockId'
   id:
     | '__root__'
     | '/'
+    | '/account/$userId'
     | '/auth'
     | '/auth/_layout'
     | '/auth/activate'
@@ -278,35 +301,38 @@ export interface FileRouteTypes {
     | '/ceramicstory/$slug'
     | '/course/$courseId'
     | '/engage/$slug'
-    | '/forum/$postId'
     | '/forum/new'
-    | '/portfolio/$workId'
+    | '/account/'
     | '/ceramicstory/'
     | '/course/'
     | '/engage/'
     | '/forum/'
     | '/gallery/'
     | '/portfolio/'
+    | '/forum/posts/$postId'
     | '/gallery/artworks/$artworkId'
+    | '/portfolio/works/$workId'
     | '/course/$courseId/chapters/$chapterId/blocks/$blockId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountUserIdRoute: typeof AccountUserIdRoute
   AuthRoute: typeof AuthRouteWithChildren
   CeramicstorySlugRoute: typeof CeramicstorySlugRoute
   CourseCourseIdRoute: typeof CourseCourseIdRouteWithChildren
   EngageSlugRoute: typeof EngageSlugRoute
-  ForumPostIdRoute: typeof ForumPostIdRoute
   ForumNewRoute: typeof ForumNewRoute
-  PortfolioWorkIdRoute: typeof PortfolioWorkIdRoute
+  AccountIndexRoute: typeof AccountIndexRoute
   CeramicstoryIndexRoute: typeof CeramicstoryIndexRoute
   CourseIndexRoute: typeof CourseIndexRoute
   EngageIndexRoute: typeof EngageIndexRoute
   ForumIndexRoute: typeof ForumIndexRoute
   GalleryIndexRoute: typeof GalleryIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
+  ForumPostsPostIdRoute: typeof ForumPostsPostIdRoute
   GalleryArtworksArtworkIdRoute: typeof GalleryArtworksArtworkIdRoute
+  PortfolioWorksWorkIdRoute: typeof PortfolioWorksWorkIdRoute
 }
 
 declare module '@tanstack/solid-router' {
@@ -367,11 +393,11 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof CeramicstoryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/portfolio/$workId': {
-      id: '/portfolio/$workId'
-      path: '/portfolio/$workId'
-      fullPath: '/portfolio/$workId'
-      preLoaderRoute: typeof PortfolioWorkIdRouteImport
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forum/new': {
@@ -379,13 +405,6 @@ declare module '@tanstack/solid-router' {
       path: '/forum/new'
       fullPath: '/forum/new'
       preLoaderRoute: typeof ForumNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forum/$postId': {
-      id: '/forum/$postId'
-      path: '/forum/$postId'
-      fullPath: '/forum/$postId'
-      preLoaderRoute: typeof ForumPostIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/engage/$slug': {
@@ -451,11 +470,32 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof AuthLayoutRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/account/$userId': {
+      id: '/account/$userId'
+      path: '/account/$userId'
+      fullPath: '/account/$userId'
+      preLoaderRoute: typeof AccountUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/works/$workId': {
+      id: '/portfolio/works/$workId'
+      path: '/portfolio/works/$workId'
+      fullPath: '/portfolio/works/$workId'
+      preLoaderRoute: typeof PortfolioWorksWorkIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery/artworks/$artworkId': {
       id: '/gallery/artworks/$artworkId'
       path: '/gallery/artworks/$artworkId'
       fullPath: '/gallery/artworks/$artworkId'
       preLoaderRoute: typeof GalleryArtworksArtworkIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forum/posts/$postId': {
+      id: '/forum/posts/$postId'
+      path: '/forum/posts/$postId'
+      fullPath: '/forum/posts/$postId'
+      preLoaderRoute: typeof ForumPostsPostIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/course/$courseId/chapters/$chapterId/blocks/$blockId': {
@@ -503,20 +543,22 @@ const CourseCourseIdRouteWithChildren = CourseCourseIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountUserIdRoute: AccountUserIdRoute,
   AuthRoute: AuthRouteWithChildren,
   CeramicstorySlugRoute: CeramicstorySlugRoute,
   CourseCourseIdRoute: CourseCourseIdRouteWithChildren,
   EngageSlugRoute: EngageSlugRoute,
-  ForumPostIdRoute: ForumPostIdRoute,
   ForumNewRoute: ForumNewRoute,
-  PortfolioWorkIdRoute: PortfolioWorkIdRoute,
+  AccountIndexRoute: AccountIndexRoute,
   CeramicstoryIndexRoute: CeramicstoryIndexRoute,
   CourseIndexRoute: CourseIndexRoute,
   EngageIndexRoute: EngageIndexRoute,
   ForumIndexRoute: ForumIndexRoute,
   GalleryIndexRoute: GalleryIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
+  ForumPostsPostIdRoute: ForumPostsPostIdRoute,
   GalleryArtworksArtworkIdRoute: GalleryArtworksArtworkIdRoute,
+  PortfolioWorksWorkIdRoute: PortfolioWorksWorkIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

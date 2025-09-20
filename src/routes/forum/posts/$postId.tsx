@@ -113,7 +113,7 @@ const fetchPostDetails = async (postId: string): Promise<PostDetails> => {
 
 // --- Route Definition with Loader ---
 
-export const Route = createFileRoute("/forum/$postId")({
+export const Route = createFileRoute("/forum/posts/$postId")({
   loader: ({ params: { postId } }) => fetchPostDetails(postId),
   component: PostDetailPage,
 });

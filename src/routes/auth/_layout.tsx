@@ -2,10 +2,6 @@ import { createFileRoute, Outlet } from "@tanstack/solid-router";
 import { Show, type Component, type JSX } from "solid-js";
 import { GoogleLogo, WechatLogo } from "~/components/icons/Phosphor";
 
-export const Route = createFileRoute("/auth/_layout")({
-  component: AuthLayout,
-});
-
 // This is the main layout for all /auth/* routes.
 // The <Outlet /> component will render the specific child route (login, signup, etc.)
 export function AuthLayout() {
@@ -24,6 +20,10 @@ export function AuthLayout() {
     </main>
   );
 }
+
+export const Route = createFileRoute("/auth/_layout")({
+  component: AuthLayout,
+});
 
 // --- Shared Components for Auth Forms ---
 

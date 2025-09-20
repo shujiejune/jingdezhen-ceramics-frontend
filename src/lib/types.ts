@@ -33,6 +33,7 @@ export interface Note {
   content: string; // Full Markdown content
   entityType?: "artwork" | "course_chapter";
   entityId?: number;
+  parentEntityId?: number;
   entityTitle?: string; // Title of the artwork or chapter
   createdAt: string;
   updatedAt: string;
@@ -162,6 +163,36 @@ export interface Notification {
   createdAt: string; // ISO Date String
 }
 
-export interface EnrolledCourse extends Course {
+export interface EnrolledCourse {
+  id: number;
+  title: string;
+  thumbnailUrl: string;
   progress: number; // Percentage
+}
+
+// --- Portfolio/Work Types For Notification ---
+export interface UserWork {
+  id: number;
+  title: string;
+  thumbnailUrl: string;
+  upvotesCount: number;
+}
+
+// --- Forum/Post Types For Notification ---
+export interface UserPost {
+  id: number;
+  title: string;
+  categoryName: string;
+  createdAt: string;
+  commentCount: number;
+  likeCount: number;
+}
+
+// --- Gallery/Artwork Types For Notification ---
+export interface UserFavorite {
+  id: number;
+  title: string;
+  thumbnailUrl: string;
+  artistName?: string;
+  period: string;
 }
