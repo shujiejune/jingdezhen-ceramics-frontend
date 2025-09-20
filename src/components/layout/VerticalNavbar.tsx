@@ -15,7 +15,7 @@ import {
   Books,
   Swap,
   Handsclapping,
-  EnvelopeOpen,
+  Mailbox,
 } from "~/components/icons/Phosphor";
 
 // A generic type for custom icon components
@@ -133,7 +133,7 @@ const ExpandedMenu: Component<ExpandedMenuProps> = (props) => {
     { to: "/course", icon: Books, text: "Course" },
     { to: "/forum", icon: Swap, text: "Forum" },
     { to: "/portfolio", icon: Handsclapping, text: "Portfolio" },
-    { to: "/contact", icon: EnvelopeOpen, text: "Contact" },
+    { to: "/contact", icon: Mailbox, text: "Contact" },
   ];
 
   return (

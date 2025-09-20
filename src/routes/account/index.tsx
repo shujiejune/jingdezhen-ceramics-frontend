@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/solid-router";
-import { createQuery } from "@tanstack/solid-query";
+import { useQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense, createSignal, type Component } from "solid-js";
 import { z } from "zod";
 import {
   Bell,
   BookOpen,
   Note,
-  ImageSquare,
-  ChatCircleText,
+  Palette,
+  Swap,
   Heart,
   BookmarkSimple,
   MagnifyingGlass,
@@ -172,8 +172,8 @@ const ProfileSidebar: Component<{ activeTab: string }> = (props) => {
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "enrolled-courses", label: "Enrolled Courses", icon: BookOpen },
     { id: "my-notes", label: "My Notes", icon: Note },
-    { id: "my-works", label: "My Works", icon: ImageSquare },
-    { id: "my-posts", label: "My Posts", icon: ChatCircleText },
+    { id: "my-works", label: "My Works", icon: Palette },
+    { id: "my-posts", label: "My Posts", icon: Swap },
     { id: "my-favorites", label: "My Favorites", icon: Heart },
     { id: "my-saves", label: "My Saves", icon: BookmarkSimple },
   ];
@@ -228,7 +228,7 @@ const PanelHeader: Component<{ title: string; children?: any }> = (props) => (
 );
 
 const NotificationsPanel: Component = () => {
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ["profile-notifications"],
     queryFn: fetchNotifications,
   }));
@@ -270,7 +270,7 @@ const NotificationsPanel: Component = () => {
 };
 
 const EnrolledCoursesPanel: Component = () => {
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ["profile-courses"],
     queryFn: fetchEnrolledCourses,
   }));
@@ -308,7 +308,7 @@ const EnrolledCoursesPanel: Component = () => {
 };
 
 const MyNotesPanel: Component = () => {
-  const query = createQuery(() => ({
+  const query = useQuery(() => ({
     queryKey: ["profile-notes"],
     queryFn: fetchMyNotes,
   }));
