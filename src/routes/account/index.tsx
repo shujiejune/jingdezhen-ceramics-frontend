@@ -5,13 +5,21 @@ import { z } from "zod";
 import {
   Bell,
   BookOpen,
-  Note,
+  Notebook,
   Palette,
   Swap,
   Heart,
   BookmarkSimple,
   MagnifyingGlass,
 } from "~/components/icons/Phosphor";
+import {
+  Notification,
+  EnrolledCourse,
+  Note,
+  PortfolioWork,
+  Artwork,
+  ForumPost,
+} from "~/lib/types";
 
 // --- Mock User Data ---
 const mockUser = {
@@ -20,50 +28,46 @@ const mockUser = {
 };
 
 // --- Mock Data & API Fetching ---
-// In a real app, these types would likely live in `src/lib/types.ts`
 
-interface Notification {
-  id: number;
-  type: "comment" | "mention" | "system";
-  content: string;
-  link: string;
-  createdAt: string;
-}
 const fetchNotifications = async (): Promise<Notification[]> => {
-  await new Promise((r) => setTimeout(r, 400));
+  await new Promise((r) => setTimeout(r, 300));
   return [
     {
       id: 1,
-      type: "comment",
-      content: "User 'ClayFan' replied to your post in 'Glazing Techniques'.",
-      link: "/forum/123",
+      actorUser: { id: "user-2", nickname: "ClayFan", avatarUrl: "" },
+      notificationType: "comment",
+      entityType: "post",
+      entityId: 123,
+      entityTitle: "Glazing Techniques",
+      message: "replied to your post.",
+      isRead: false,
       createdAt: "2025-09-17T10:30:00Z",
     },
     {
       id: 2,
-      type: "mention",
-      content: "You were mentioned in a comment on 'Vase #3'.",
-      link: "/portfolio/works/3",
+      actorUser: { id: "user-3", nickname: "PotterHead", avatarUrl: "" },
+      notificationType: "mention",
+      entityType: "artwork",
+      entityId: 3,
+      entityTitle: "Vase #3",
+      message: "mentioned you in a note.",
+      isRead: true,
       createdAt: "2025-09-16T18:00:00Z",
     },
     {
       id: 3,
-      type: "system",
-      content: "Your new course 'Advanced Wheel Throwing' has been approved.",
-      link: "/course/4",
+      notificationType: "system",
+      entityType: "course",
+      entityId: 4,
+      entityTitle: "Advanced Wheel Throwing",
+      message: "Your new course has been approved.",
+      isRead: true,
       createdAt: "2025-09-15T12:00:00Z",
     },
   ];
 };
-
-interface EnrolledCourse {
-  id: number;
-  title: string;
-  thumbnailUrl: string;
-  progress: number; // Percentage
-}
 const fetchEnrolledCourses = async (): Promise<EnrolledCourse[]> => {
-  await new Promise((r) => setTimeout(r, 400));
+  await new Promise((r) => setTimeout(r, 300));
   return [
     {
       id: 1,
@@ -79,32 +83,91 @@ const fetchEnrolledCourses = async (): Promise<EnrolledCourse[]> => {
     },
   ];
 };
-
-interface UserNote {
-  id: number;
-  title: string;
-  excerpt: string;
-  artworkId: number;
-  artworkTitle: string;
-}
-const fetchMyNotes = async (): Promise<UserNote[]> => {
-  await new Promise((r) => setTimeout(r, 400));
+const fetchMyNotes = async (): Promise<Note[]> => {
+  await new Promise((r) => setTimeout(r, 300));
   return [
     {
       id: 1,
       title: "Cobalt Blue observations",
-      excerpt: "The 'heaping and piling' is very pronounced here...",
-      artworkId: 1,
-      artworkTitle: "Blue-and-white Plate",
+      content:
+        "The 'heaping and piling' is very pronounced here. Need to compare with Xuande period examples.",
+      entityType: "artwork",
+      entityId: 1,
+      entityTitle: "Blue-and-white Plate",
+      createdAt: "2025-09-10T11:00:00Z",
+      updatedAt: "2025-09-12T15:45:00Z",
     },
     {
       id: 2,
       title: "Dragon Motif study",
-      excerpt: "The three-clawed dragon is typical for this period...",
-      artworkId: 1,
-      artworkTitle: "Blue-and-white Plate",
+      content: "The three-clawed dragon is typical for this period.",
+      entityType: "artwork",
+      entityId: 1,
+      entityTitle: "Blue-and-white Plate",
+      createdAt: "2025-09-01T18:20:00Z",
+      updatedAt: "2025-09-01T18:20:00Z",
     },
   ];
+};
+const fetchMyWorks = async (): Promise<PortfolioWork[]> => {
+  await new Promise((r) => setTimeout(r, 300));
+  return [
+    {
+      id: 1,
+      title: "Spiral Vase",
+      thumbnailUrl: "https://placehold.co/400x400/fff7ed/c2410c?text=Work+1",
+      upvotesCount: 128,
+    },
+    {
+      id: 2,
+      title: "Tea Bowl Set",
+      thumbnailUrl: "https://placehold.co/400x400/fef2f2/b91c1c?text=Work+2",
+      upvotesCount: 95,
+    },
+  ];
+};
+const fetchMyPosts = async (): Promise<ForumPost[]> => {
+  await new Promise((r) => setTimeout(r, 300));
+  return [
+    {
+      id: 123,
+      title: "Glazing Techniques for Beginners",
+      categoryName: "How To",
+      createdAt: "2025-08-20T14:00:00Z",
+      commentCount: 12,
+      likeCount: 45,
+    },
+    {
+      id: 124,
+      title: "Showcase: My latest wood-fired pieces",
+      categoryName: "Showcase",
+      createdAt: "2025-07-11T09:30:00Z",
+      commentCount: 5,
+      likeCount: 33,
+    },
+  ];
+};
+const fetchMyFavorites = async (): Promise<Artwork[]> => {
+  await new Promise((r) => setTimeout(r, 300));
+  return [
+    {
+      id: 1,
+      title: "Blue-and-white Plate",
+      thumbnailUrl: "https://placehold.co/400x600/e0f2fe/0891b2?text=Fav+1",
+      artistName: "Unknown",
+      period: "Ming Yongle",
+    },
+    {
+      id: 2,
+      title: "Famille Rose Vase",
+      thumbnailUrl: "https://placehold.co/400x600/fce7f3/831843?text=Fav+2",
+      artistName: "Unknown",
+      period: "Qing Yongzheng",
+    },
+  ];
+};
+const fetchMySaves = async (): Promise<ForumPost[]> => {
+  return fetchMyPosts(); // For demo, assume saved posts are same as user's posts
 };
 
 // You would also have fetch functions for Works, Posts, Favorites, and Saves
@@ -112,7 +175,7 @@ const fetchMyNotes = async (): Promise<UserNote[]> => {
 
 // --- Route Definition ---
 
-const profileSearchSchema = z.object({
+const accountSearchSchema = z.object({
   tab: z
     .enum([
       "notifications",
@@ -127,14 +190,14 @@ const profileSearchSchema = z.object({
     .catch("notifications"),
 });
 
-export const Route = createFileRoute("/profile/")({
-  validateSearch: (search) => profileSearchSchema.parse(search),
-  component: ProfilePage,
+export const Route = createFileRoute("/account/")({
+  validateSearch: (search) => accountSearchSchema.parse(search),
+  component: AccountPage,
 });
 
 // --- Main Page Component ---
 
-function ProfilePage() {
+function AccountPage() {
   const search = Route.useSearch();
   const activeTab = () => search().tab;
 
@@ -157,7 +220,18 @@ function ProfilePage() {
             <Show when={activeTab() === "my-notes"}>
               <MyNotesPanel />
             </Show>
-            {/* Add <Show> blocks for other panels here */}
+            <Show when={activeTab() === "my-works"}>
+              <MyWorksPanel />
+            </Show>
+            <Show when={activeTab() === "my-posts"}>
+              <MyPostsPanel />
+            </Show>
+            <Show when={activeTab() === "my-favorites"}>
+              <MyFavoritesPanel />
+            </Show>
+            <Show when={activeTab() === "my-saves"}>
+              <MySavesPanel />
+            </Show>
           </Suspense>
         </main>
       </div>
@@ -171,7 +245,7 @@ const ProfileSidebar: Component<{ activeTab: string }> = (props) => {
   const tabs = [
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "enrolled-courses", label: "Enrolled Courses", icon: BookOpen },
-    { id: "my-notes", label: "My Notes", icon: Note },
+    { id: "my-notes", label: "My Notes", icon: Notebook },
     { id: "my-works", label: "My Works", icon: Palette },
     { id: "my-posts", label: "My Posts", icon: Swap },
     { id: "my-favorites", label: "My Favorites", icon: Heart },
@@ -197,7 +271,7 @@ const ProfileSidebar: Component<{ activeTab: string }> = (props) => {
               return (
                 <li>
                   <Link
-                    to="/profile"
+                    to="/account"
                     search={{ tab: tab.id }}
                     class="flex items-center gap-3 px-4 py-2.5 rounded-md text-gray-700 transition-colors"
                     classList={{

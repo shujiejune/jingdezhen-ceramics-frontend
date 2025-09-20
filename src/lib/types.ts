@@ -1,4 +1,10 @@
 // TypeScript type definitions (User, Artwork, Post)
+export interface User {
+  id: string; // UUID
+  nickname: string;
+  avatarUrl: string;
+}
+
 export interface Tag {
   id: number;
   name: string;
@@ -24,7 +30,10 @@ export interface ForumPost {
 export interface Note {
   id: number;
   title: string;
-  content: string;
+  content: string; // Full Markdown content
+  entityType?: "artwork" | "course_chapter";
+  entityId?: number;
+  entityTitle?: string; // Title of the artwork or chapter
   createdAt: string;
   updatedAt: string;
 }
@@ -132,4 +141,27 @@ export interface Artwork {
   tags?: Tag[];
   createdAt: string;
   updatedAt?: string;
+}
+
+export type NotificationType =
+  | "comment"
+  | "mention"
+  | "system"
+  | "favorite"
+  | "new_post";
+
+export interface Notification {
+  id: number;
+  actorUser?: User;
+  notificationType: NotificationType;
+  entityType?: "post" | "artwork" | "course";
+  entityId?: number;
+  entityTitle?: string; // It's helpful if the backend provides the title
+  message: string; // The fallback or main message
+  isRead: boolean;
+  createdAt: string; // ISO Date String
+}
+
+export interface EnrolledCourse extends Course {
+  progress: number; // Percentage
 }
