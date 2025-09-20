@@ -2,16 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/solid-router";
 import { useQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense, createSignal, type Component } from "solid-js";
 import { z } from "zod";
-import {
-  Bell,
-  BookOpen,
-  Notebook,
-  Palette,
-  Swap,
-  Heart,
-  BookmarkSimple,
-  MagnifyingGlass,
-} from "~/components/icons/Phosphor";
+import { AccountSidebar } from "~/components/layout/AccountSidebar";
+import { MagnifyingGlass } from "~/components/icons/Phosphor";
 import {
   Notification,
   EnrolledCourse,
@@ -20,7 +12,6 @@ import {
   Artwork,
   ForumPost,
 } from "~/lib/types";
-import { AccountSidebar } from "~/components/layout/AccountSidebar";
 
 // --- Mock User Data ---
 const mockUser = {
@@ -249,9 +240,23 @@ const PanelHeader: Component<{ title: string; children?: any }> = (props) => (
   </div>
 );
 
+const getEntityLink = (type: string | undefined, id: number | undefined) => {
+  if (!type || !id) return "/";
+  switch (type) {
+    case "post":
+      return `/forum/${id}`;
+    case "artwork":
+      return `/gallery/artworks/${id}`;
+    case "course":
+      return `/course/${id}`;
+    default:
+      return "/";
+  }
+};
+
 const NotificationsPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-notifications"],
+    queryKey: ["account-notifications"],
     queryFn: fetchNotifications,
   }));
 
@@ -271,12 +276,33 @@ const NotificationsPanel: Component = () => {
               {(notification) => (
                 <tr class="border-b hover:bg-gray-50">
                   <td class="px-6 py-4">
-                    <Link
-                      to={notification.link}
-                      class="text-blue-600 hover:underline"
-                    >
-                      {notification.content}
-                    </Link>
+                    <div class="flex items-center gap-2">
+                      <Show when={!notification.isRead}>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                      </Show>
+                      <span>
+                        <Show when={notification.actorUser}>
+                          <Link
+                            to={`/account/${notification.actorUser!.id}`}
+                            class="font-semibold text-gray-800 hover:underline"
+                          >
+                            {notification.actorUser!.nickname}
+                          </Link>
+                        </Show>{" "}
+                        {notification.message}{" "}
+                        <Show when={notification.entityTitle}>
+                          <Link
+                            to={getEntityLink(
+                              notification.entityType,
+                              notification.entityId,
+                            )}
+                            class="font-semibold text-blue-600 hover:underline"
+                          >
+                            '{notification.entityTitle}'
+                          </Link>
+                        </Show>
+                      </span>
+                    </div>
                   </td>
                   <td class="px-6 py-4 text-gray-500">
                     {new Date(notification.createdAt).toLocaleDateString()}
@@ -293,7 +319,7 @@ const NotificationsPanel: Component = () => {
 
 const EnrolledCoursesPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-courses"],
+    queryKey: ["account-courses"],
     queryFn: fetchEnrolledCourses,
   }));
 
@@ -331,10 +357,16 @@ const EnrolledCoursesPanel: Component = () => {
 
 const MyNotesPanel: Component = () => {
   const query = useQuery(() => ({
-    queryKey: ["profile-notes"],
+    queryKey: ["account-notes"],
     queryFn: fetchMyNotes,
   }));
   const [searchTerm, setSearchTerm] = createSignal("");
+
+  const createExcerpt = (content: string, length = 100) => {
+    return content.length > length
+      ? content.substring(0, length) + "..."
+      : content;
+  };
 
   const filteredNotes = () => {
     const lowerSearch = searchTerm().toLowerCase();
@@ -342,8 +374,8 @@ const MyNotesPanel: Component = () => {
     return query.data?.filter(
       (note) =>
         note.title.toLowerCase().includes(lowerSearch) ||
-        note.artworkTitle.toLowerCase().includes(lowerSearch) ||
-        note.excerpt.toLowerCase().includes(lowerSearch),
+        note.entityTitle?.toLowerCase().includes(lowerSearch) ||
+        note.content.toLowerCase().includes(lowerSearch),
     );
   };
 
@@ -369,18 +401,178 @@ const MyNotesPanel: Component = () => {
               <p class="text-sm text-gray-600 mt-1 italic">
                 on{" "}
                 <Link
-                  to={`/gallery/artworks/${note.artworkId}`}
+                  to={`/gallery/artworks/${note.entityId}`}
                   class="text-blue-600 hover:underline"
                 >
-                  {note.artworkTitle}
+                  {note.entityTitle}
                 </Link>
               </p>
               <p class="text-sm text-gray-500 mt-2 line-clamp-2">
-                {note.excerpt}
+                {note.content}
               </p>
             </div>
           )}
         </For>
+      </div>
+    </div>
+  );
+};
+
+const MyWorksPanel: Component = () => {
+  const query = useQuery(() => ({
+    queryKey: ["profile-works"],
+    queryFn: fetchMyWorks,
+  }));
+  return (
+    <div>
+      <PanelHeader title="My Works" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <For each={query.data}>
+          {(work) => (
+            <Link
+              to={`/portfolio/works/${work.id}`}
+              class="border rounded-lg bg-white overflow-hidden shadow-sm group"
+            >
+              <img
+                src={work.thumbnailUrl}
+                alt={work.title}
+                class="w-full h-48 object-cover transition-transform duration-200 group-hover:scale-105"
+              />
+              <div class="p-4 flex justify-between items-center">
+                <h3 class="font-semibold truncate">{work.title}</h3>
+                <div class="flex items-center gap-1 text-sm text-gray-500">
+                  <Heart weight="fill" class="text-red-400" />{" "}
+                  {work.upvotesCount}
+                </div>
+              </div>
+            </Link>
+          )}
+        </For>
+      </div>
+    </div>
+  );
+};
+
+const MyPostsPanel: Component = () => {
+  const query = useQuery(() => ({
+    queryKey: ["profile-posts"],
+    queryFn: fetchMyPosts,
+  }));
+  return (
+    <div>
+      <PanelHeader title="My Posts" />
+      <div class="border rounded-lg bg-white overflow-hidden">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-gray-50 border-b">
+            <tr class="text-gray-600">
+              <th class="px-6 py-3 font-medium">Title</th>
+              <th class="px-6 py-3 font-medium">Stats</th>
+              <th class="px-6 py-3 font-medium">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <For each={query.data}>
+              {(post) => (
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="px-6 py-4">
+                    <Link
+                      to={`/forum/${post.id}`}
+                      class="font-semibold text-blue-600 hover:underline"
+                    >
+                      {post.title}
+                    </Link>
+                    <p class="text-xs text-gray-500">{post.forumCategory}</p>
+                  </td>
+                  <td class="px-6 py-4 text-gray-600">
+                    {post.commentCount} comments / {post.upvotesCount} upvotes
+                  </td>
+                  <td class="px-6 py-4 text-gray-500">
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const MyFavoritesPanel: Component = () => {
+  const query = useQuery(() => ({
+    queryKey: ["profile-favorites"],
+    queryFn: fetchMyFavorites,
+  }));
+  return (
+    <div>
+      <PanelHeader title="My Favorites" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <For each={query.data}>
+          {(fav) => (
+            <Link
+              to={`/gallery/artworks/${fav.id}`}
+              class="border rounded-lg bg-white overflow-hidden shadow-sm group"
+            >
+              <img
+                src={fav.thumbnailUrl}
+                alt={fav.title}
+                class="w-full h-64 object-cover transition-transform duration-200 group-hover:scale-105"
+              />
+              <div class="p-4">
+                <h3 class="font-semibold truncate">{fav.title}</h3>
+                <p class="text-sm text-gray-500">{fav.period}</p>
+              </div>
+            </Link>
+          )}
+        </For>
+      </div>
+    </div>
+  );
+};
+
+const MySavesPanel: Component = () => {
+  const query = useQuery(() => ({
+    queryKey: ["profile-saves"],
+    queryFn: fetchMySaves,
+  }));
+  return (
+    <div>
+      <PanelHeader title="My Saved Posts" />
+      {/* This reuses the same table structure as MyPostsPanel */}
+      <div class="border rounded-lg bg-white overflow-hidden">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-gray-50 border-b">
+            <tr class="text-gray-600">
+              <th class="px-6 py-3 font-medium">Title</th>
+              <th class="px-6 py-3 font-medium">Stats</th>
+              <th class="px-6 py-3 font-medium">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <For each={query.data}>
+              {(post) => (
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="px-6 py-4">
+                    <Link
+                      to={`/forum/${post.id}`}
+                      class="font-semibold text-blue-600 hover:underline"
+                    >
+                      {post.title}
+                    </Link>
+                    <p class="text-xs text-gray-500">{post.forumCategory}</p>
+                  </td>
+                  <td class="px-6 py-4 text-gray-600">
+                    {post.commentCount} comments / {post.upvotesCount} upvotes
+                  </td>
+                  <td class="px-6 py-4 text-gray-500">
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
       </div>
     </div>
   );

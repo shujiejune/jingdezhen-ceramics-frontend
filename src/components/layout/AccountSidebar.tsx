@@ -8,7 +8,6 @@ import {
   Swap,
   Heart,
   BookmarkSimple,
-  MagnifyingGlass,
 } from "~/components/icons/Phosphor";
 
 export const AccountSidebar: Component<{ activeTab: string }> = (props) => {
